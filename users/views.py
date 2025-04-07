@@ -262,7 +262,7 @@ def ask_question(request):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User, Profile, Education, Experience, ProfileSkillsCertifications
-
+from django.core.files.storage import FileSystemStorage
 def profile(request):
     user_id = request.session.get('user_id')
     
@@ -283,6 +283,13 @@ def profile(request):
             profile.linkedin = request.POST.get("linkedin")
             profile.profile_pic = request.FILES.get("profile_pic") or profile.profile_pic
             profile.resume = request.FILES.get("resume") or profile.resume
+            profile.street_address = request.POST.get("street_address")
+            profile.city = request.POST.get("city")
+            profile.state = request.POST.get("state")
+            profile.zip_code = request.POST.get("zip_code")
+            profile.country = request.POST.get("country")
+            profile.enrollment =request.POST.get("enrollment")
+            profile.dob = request.POST.get("dob")
             profile.save()
 
             # Clear and save other profile details
@@ -316,8 +323,19 @@ def profile(request):
 
             # ✅ Store skills & certifications as lists instead of separate models
             profile_data.skills = request.POST.getlist("skills[]")
-            profile_data.certifications = request.POST.getlist("certifications[]")
+            # profile_data.certifications = request.POST.getlist("certifications[]")
+            # profile_data.save()
+            # Get certification names and uploaded files
+            certification_names = request.POST.getlist("certifications[]")
+            certification_files = request.FILES.getlist("certification_files[]")
+
+            certifications_combined = []
+
+            # Combine name and file
+            for name, file in zip(certification_names, certification_files):
+                Certification.objects.create(profile=profile_data, name=name, file=file)
             profile_data.save()
+
 
             messages.success(request, "Profile updated successfully!")
             return redirect("profile")  # ✅ Redirect after POST

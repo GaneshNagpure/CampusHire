@@ -27,7 +27,7 @@ class FAQAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'headline', 'contact', 'github', 'linkedin','email','id','profile_pic','resume')
+    list_display = ('user', 'headline', 'contact', 'github', 'linkedin','city','enrollment','dob','email','id','profile_pic','resume')
     search_fields = ('user__username', 'headline', 'contact')
 
 @admin.register(Education)
@@ -54,17 +54,43 @@ class ExperienceAdmin(admin.ModelAdmin):
 # class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
 #     list_display = ( 'skill_name', 'certification_name')
 #     search_fields = ('profile__user__username', 'skill_name', 'certification_name')
+
+# from django.contrib import admin
+# from .models import ProfileSkillsCertifications
+
+# class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
+#     list_display = ('profile', 'display_skills', 'display_certifications')  # ✅ Updated field names
+
+#     def display_skills(self, obj):
+#         return ", ".join(obj.skills) if obj.skills else "No skills"
+
+#     def display_certifications(self, obj):
+#         return ", ".join(obj.certifications) if obj.certifications else "No certifications"
+
+#     display_skills.short_description = "Skills"
+#     display_certifications.short_description = "Certifications"
+
+# admin.site.register(ProfileSkillsCertifications, ProfileSkillsCertificationsAdmin)
+
 from django.contrib import admin
-from .models import ProfileSkillsCertifications
+from django.utils.html import format_html, format_html_join, mark_safe
+from .models import ProfileSkillsCertifications, Certification
 
 class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'display_skills', 'display_certifications')  # ✅ Updated field names
+    list_display = ('profile', 'display_skills', 'display_certifications')
 
     def display_skills(self, obj):
         return ", ".join(obj.skills) if obj.skills else "No skills"
 
     def display_certifications(self, obj):
-        return ", ".join(obj.certifications) if obj.certifications else "No certifications"
+        certifications = obj.certifications.all()
+        if not certifications:
+            return "No certifications"
+        return format_html_join(
+            mark_safe('<br>'),
+            '<a href="{}" target="_blank">{}</a>',
+            ((cert.file.url, cert.name) for cert in certifications)
+        )
 
     display_skills.short_description = "Skills"
     display_certifications.short_description = "Certifications"

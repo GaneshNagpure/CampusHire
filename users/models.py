@@ -49,6 +49,13 @@ class Profile(models.Model):
     linkedin = models.URLField(blank=True, null=True)
     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+    street_address = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    zip_code = models.CharField(max_length=20, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    enrollment = models.CharField(max_length=100, blank=True)
+    dob = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         """ Automatically sync name & email from User model. """
@@ -74,22 +81,26 @@ class Experience(models.Model):
     end_date = models.DateField(blank=True, null=True)
     role_type = models.CharField(max_length=50, choices=[('Full-Time', 'Full-Time'), ('Internship', 'Internship')])
 
-# class Skill(models.Model):
-#     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='skills')
-#     skill_name = models.CharField(max_length=255)
+# class ProfileSkillsCertifications(models.Model):
+#     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='skills_certifications')
+#     skills = models.JSONField(default=list)  # Stores skills as a list
+#     certifications = models.JSONField(default=list)  # Stores certifications as a list
 
-# class Certification(models.Model):
-#     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='certifications')
-#     certification_name = models.CharField(max_length=255)
+#     def __str__(self):
+#         return f"{self.profile.name} - Skills & Certifications"
+
 
 class ProfileSkillsCertifications(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='skills_certifications')
     skills = models.JSONField(default=list)  # Stores skills as a list
-    certifications = models.JSONField(default=list)  # Stores certifications as a list
+    #certifications = models.JSONField(default=list)  # Stores certifications as a list
 
     def __str__(self):
-        return f"{self.profile.name} - Skills & Certifications"
+        return f"{self.profile.name} - Skills"
 
-
-
-
+class Certification(models.Model):
+    profile = models.ForeignKey(ProfileSkillsCertifications, on_delete=models.CASCADE, related_name='certifications')
+    certification_name = models.CharField(max_length=255)
+    file = models.FileField(upload_to='certifications/', blank=True, null=True)
+    def __str__(self):
+        return self.certification_name
