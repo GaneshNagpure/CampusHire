@@ -1,0 +1,100 @@
+{% extends 'base/base.html' %}
+{% block title %}Ask a Question{% endblock %}
+
+{% block content %}
+{% if messages %}
+    <div class="alert alert-info" role="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+<!-- {% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    {% endfor %}
+{% endif %}          -->
+
+
+<div class="ask-question-container">
+    <h1>Ask a Question</h1>
+    <form method="POST" class="ask-question-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="question">Your Question:</label>
+            <textarea name="question" id="question" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+</div>
+
+<style>
+    .ask-question-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* Enhanced shadow effect */
+        font-family: 'Arial', sans-serif;
+        transition: box-shadow 0.3s ease;
+    }
+    .ask-question-container:hover {
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Shadow gets stronger on hover */
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #555;
+    }
+    textarea {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        resize: none;
+    }
+    .submit-button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        color: #fff;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for the button */
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .submit-button:hover {
+        background-color: #0056b3;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+    }
+</style>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script>
+  // Automatically close alert messages after 3 seconds
+  setTimeout(function() {
+    let alerts = document.querySelectorAll(".alert");
+    alerts.forEach(alert => {
+      alert.style.transition = "opacity 0.5s";
+      alert.style.opacity = "0";
+      setTimeout(() => alert.remove(), 500);
+    });
+  }, 3000); // 3000ms = 3 seconds
+</script>
+{% endblock %}

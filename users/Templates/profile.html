@@ -1,0 +1,292 @@
+{% extends 'base/dashboardbase.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create Your Profile</h2>
+    <div class="row">
+        <!-- Instructions Section -->
+        <div class="col-md-4">
+            <div class="card p-3 bg-light">
+                <h5>Instructions</h5>
+                <div id="instructionText">
+                    <p><strong>Step 1:</strong> Enter your personal details like name, email, phone, and social profiles.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Form Section -->
+        <div class="col-md-8">
+            <form method="post" enctype="multipart/form-data" class="mt-4" id="profileForm" action="{% url 'profile' %}">
+                {% csrf_token %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                <div class="step" id="step1">
+                    <h4>Personal Information</h4>
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="headline" class="form-label">Profile Headline</label>
+                        <input type="text" class="form-control" id="headline" name="headline" placeholder="E.g., Software Engineer | Python Developer">
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="contact" class="form-label">Contact Number</label>
+                        <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number">
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="github" class="form-label">GitHub Profile</label>
+                        <input type="url" class="form-control" id="github" name="github" placeholder="https://github.com/yourusername">
+                    </div>
+                
+                    <div class="mb-3">
+                        <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                        <input type="url" class="form-control" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourusername">
+                    </div>
+                
+                    <button type="button" class="btn btn-primary next-step">Next</button>
+                </div>
+                
+                <div class="step d-none" id="step2">
+                    <h4>Education Details</h4>
+                    <div id="education-container">
+                        <div class="education-entry mb-3">
+                            <label class="form-label">Education Level</label>
+                            <select class="form-control" name="education_level[]" required>
+                                <option value="Post Graduation">Post Graduation</option>
+                                <option value="Graduation">Graduation</option>
+                                <option value="Diploma">Diploma</option>
+                                <option value="12th">12th</option>
+                                <option value="10th">10th</option>
+                            </select>
+                            <label class="form-label">College/School Name</label>
+                            <input type="text" class="form-control" name="college[]" required>
+                            <label class="form-label">Degree</label>
+                            <input type="text" class="form-control" name="degree[]" required>
+                            <button type="button" class="btn btn-danger remove-education">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-education">Add More</button>
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="button" class="btn btn-primary next-step">Next</button>
+                </div>
+
+                <div class="step d-none" id="step3">
+                    <h4>Experience</h4>
+                    <div id="experience-container">
+                        <div class="experience-entry mb-3">
+                            <label class="form-label">Company</label>
+                            <input type="text" class="form-control" name="company[]">
+                    
+                            <label class="form-label">Role</label>
+                            <input type="text" class="form-control" name="role[]">
+                    
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-control" name="start_date[]">
+                            
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-control" name="end_date[]">
+                    
+                            <label class="form-label">Role Type</label>
+                            <select class="form-control" name="role_type[]">
+                                <option value="Full-Time">Full-Time</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                    
+                            <button type="button" class="btn btn-danger remove-experience" style="display: none;">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-experience">Add More</button>
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="button" class="btn btn-primary next-step">Next</button> 
+                </div>
+                
+                <!-- <div class="step d-none" id="step4">
+                    <h4>Skills & Certifications</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Skills</label>
+                        <input type="text" class="form-control" name="skills">
+                    </div>
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="button" class="btn btn-primary next-step">Next</button>
+                </div> -->
+                <div class="step d-none" id="step4">
+                    <h4>Skills & Certifications</h4>
+                    <div id="skills-container">
+                        <div class="skills-entry mb-3">
+                            <input type="text" class="form-control" name="skills[]" placeholder="Skill">
+                            <button type="button" class="btn btn-danger remove-skill">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-skill">Add More</button>
+                    
+                    <div id="certifications-container">
+                        <div class="certifications-entry mb-3">
+                            <input type="text" class="form-control" name="certifications[]" placeholder="Certification">
+                            <button type="button" class="btn btn-danger remove-certification">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-certification">Add More</button>
+                    
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="button" class="btn btn-primary next-step">Next</button>
+                </div>
+                
+                <!-- <div class="step d-none" id="step5">
+                    <h4>Upload Documents</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" name="profile_pic" accept="image/*">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Resume</label>
+                         <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx">
+                    </div>
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+                 -->
+                <div class="step d-none" id="step5">
+                    <h4>Upload Documents</h4>
+                    <div class="mb-3">
+                        <label class="form-label">Profile Picture</label>
+                        <input type="file" class="form-control" name="profile_pic">
+                    </div>
+                    <!-- <div class="mb-3">
+                        <label class="form-label">Resume</label>
+                         <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx">
+                    </div> -->
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    let currentStep = 0;
+    const steps = document.querySelectorAll(".step");
+    const nextButtons = document.querySelectorAll(".next-step");
+    const prevButtons = document.querySelectorAll(".prev-step");
+    const instructionText = document.getElementById("instructionText");
+    const instructions = [
+        "<p><strong>Step 1:</strong> Enter your personal details like name, email, phone, and social profiles.</p>",
+        "<p><strong>Step 2:</strong> Add your educational background. Include your college name and degree.</p>",
+        "<p><strong>Step 3:</strong> List your work experience, if any.</p>",
+        "<p><strong>Step 4:</strong> Mention your skills and certifications.</p>",
+        "<p><strong>Step 5:</strong> Upload your profile picture and resume.</p>",
+    ];
+
+    function showStep(index) {
+        steps.forEach((step, i) => {
+            step.classList.toggle("d-none", i !== index);
+        });
+        instructionText.innerHTML = instructions[index];
+    }
+
+    nextButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+    });
+
+    prevButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+    });
+
+    showStep(currentStep);
+
+    function setupDynamicSection(containerId, addButtonId, sectionName) {
+        const container = document.getElementById(containerId);
+        const addButton = document.getElementById(addButtonId);
+        const removedMessage = document.createElement("div");
+
+        removedMessage.id = `${sectionName}-removedMessage`;
+        removedMessage.style.display = "none";
+        removedMessage.style.color = "red";
+        removedMessage.style.marginTop = "10px";
+        container.parentNode.appendChild(removedMessage);
+
+        function updateRemoveButtons() {
+            const removeButtons = container.querySelectorAll(`.remove-${sectionName}`);
+            removeButtons.forEach(btn => {
+                btn.style.display = container.children.length > 1 ? "inline-block" : "none";
+            });
+        }
+
+        addButton.addEventListener("click", function () {
+            let newEntry = container.firstElementChild.cloneNode(true);
+            
+            // Clear input values
+            newEntry.querySelectorAll("input").forEach(input => input.value = "");
+            newEntry.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+
+            // Create and attach remove button if not already present
+            let removeBtn = newEntry.querySelector(`.remove-${sectionName}`);
+            if (!removeBtn) {
+                removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = `btn btn-danger remove-${sectionName}`;
+                removeBtn.textContent = "Remove";
+                newEntry.appendChild(removeBtn);
+            }
+
+            removeBtn.addEventListener("click", function () {
+                newEntry.remove();
+                showRemovedMessage();
+                updateRemoveButtons();
+            });
+
+            container.appendChild(newEntry);
+            updateRemoveButtons();
+        });
+
+        function showRemovedMessage() {
+            removedMessage.textContent = `${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} entry removed!`;
+            removedMessage.style.display = "block";
+
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                removedMessage.style.display = "none";
+            }, 3000);
+        }
+
+        updateRemoveButtons();
+    }
+
+    setupDynamicSection("education-container", "add-education", "education");
+    setupDynamicSection("experience-container", "add-experience", "experience");
+    setupDynamicSection("skills-container", "add-skill", "skill");
+    setupDynamicSection("certifications-container", "add-certification","certification");
+
+    document.querySelector("#profileForm").addEventListener("submit", function (event) {
+        console.log("Submitting form...");
+        document.getElementById("step5").classList.remove("d-none");
+    });
+});
+
+
+
+</script>>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base/base.html' %}
+{% block title %}FAQs{% endblock %}
+
+{% block content %}
+<div class="faq-container">
+    <h1>Frequently Asked Questions</h1>
+    <ul class="faq-list">
+        {% for faq in faqs %}
+            <li class="faq-item">
+                <strong class="faq-question" onclick="toggleAnswer({{ forloop.counter0 }})">
+                    {{ faq.question }}
+                </strong>
+                <p class="faq-answer" id="answer-{{ forloop.counter0 }}" style="display: none;">
+                    {{ faq.answer|default:"Answer not available yet." }}
+                </p>
+            </li>
+        {% empty %}
+            <p>No FAQs available at the moment.</p>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    function toggleAnswer(index) {
+        const answer = document.getElementById('answer-' + index);
+        answer.style.display = answer.style.display === 'none' ? 'block' : 'none';
+    }
+</script>
+
+<style>
+    .faq-container {
+        max-width: 800px;
+        margin: 20px auto;
+        font-family: 'Arial', sans-serif;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    .faq-list {
+        list-style: none;
+        padding: 0;
+    }
+    .faq-item {
+        border-bottom: 1px solid #ddd;
+        padding: 15px 0;
+    }
+    .faq-question {
+        cursor: pointer;
+        font-weight: bold;
+        color: #007BFF;
+    }
+    .faq-question:hover {
+        text-decoration: underline;
+    }
+    .faq-answer {
+        margin-top: 10px;
+        color: #555;
+    }
+</style>
+{% endblock %}

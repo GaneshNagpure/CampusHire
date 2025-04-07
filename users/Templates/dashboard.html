@@ -1,0 +1,140 @@
+{% extends "base/dashboardbase.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{%load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Section -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body text-center">
+                    
+                    {% if profile.profile_pic %}
+                        <img src="{{ profile.profile_pic.url }}" alt="Profile Photo" class="rounded-circle mb-3" width="120" height="120">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Profile" class="rounded-circle mb-3" width="120" height="120">
+                    {% endif %}
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text">{{ user.email }}</p>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Summary -->
+        <div class="col-md-9">
+            <div class="row">
+                {% if messages %}
+                <div class="alert alert-info" role="alert">
+                    {% for message in messages %}
+                    <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="col-md-4">
+                    <div class="card bg-success text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-briefcase"></i> Available Jobs</h5>
+                            <p class="card-text">{{ available_jobs|length }} jobs available</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-check-circle"></i> Applied Jobs</h5>
+                            <p class="card-text">{{ applications|length }} jobs applied</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-warning text-white mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-star"></i> Shortlisted Jobs</h5>
+                            <p class="card-text">2 jobs shortlisted</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h4>Recent Notifications</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">Your application for <strong>Software Engineer</strong> has been shortlisted.</li>
+                        <li class="list-group-item">New job opening at <strong>Google</strong> for Frontend Developer.</li>
+                        <li class="list-group-item">Update your profile to increase your chances of getting hired!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Recommended Jobs Section -->
+            <div class="card mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h4>Recommended Jobs for You</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Backend Developer</strong> at <em>Amazon</em>
+                            <a href="#" class="btn btn-sm btn-outline-success float-end">Apply</a>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Data Scientist</strong> at <em>Facebook</em>
+                            <a href="#" class="btn btn-sm btn-outline-success float-end">Apply</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Skills Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h4>Your Skills</h4>
+        </div>
+        <div class="card-body">
+            {% for skill in skillscertifications.skills %}
+                <span class="badge bg-primary me-2">{{ skill }}</span>
+            {% empty %}
+                <p>No skills added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+     <!-- Skills Section -->
+     <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h4>Your Certifications</h4>
+        </div>
+        <div class="card-body">
+            {% for certificate in skillscertifications.certifications %}
+                <span class="badge bg-primary me-2">{{ certificate }}</span>
+            {% empty %}
+                <p>No Certification added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+</div>
+
+<!-- Auto-close alerts after 3 seconds -->
+<script>
+    setTimeout(function() {
+        let alerts = document.querySelectorAll(".alert");
+        alerts.forEach(alert => {
+            alert.style.transition = "opacity 0.5s";
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 3000);
+</script>
+{% endblock %}
