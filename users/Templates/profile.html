@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Create Your Profile</h2>
+    <h2 class="mb-4">Create Your Profile</h2>
     <div class="row">
         <!-- Instructions Section -->
         <div class="col-md-4">
-            <div class="card p-3 bg-light">
-                <h5>Instructions</h5>
+            <div class="card p-3 bg-light shadow rounded-4">
+                <h5 class="fw-bold">Instructions</h5>
                 <div id="instructionText">
                     <p><strong>Step 1:</strong> Enter your personal details like name, email, phone, and social profiles.</p>
                 </div>
@@ -15,12 +15,14 @@
         </div>
         <!-- Form Section -->
         <div class="col-md-8">
+                
             <form method="post" enctype="multipart/form-data" class="mt-4" id="profileForm" action="{% url 'profile' %}">
                 {% csrf_token %}
                 {% for message in messages %}
                     <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
                 <div class="step" id="step1">
+                
                     <h4>Personal Information</h4>
                     
                     <div class="mb-3">
@@ -194,6 +196,7 @@
                     <button type="submit" class="btn btn-success">Submit</button>
                 </div>
             </form>
+            
         </div>
     </div>
 </div>

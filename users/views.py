@@ -362,3 +362,31 @@ from django.shortcuts import render, get_object_or_404
 #         'skills': skill_cert_data.skills,
 #         'certifications': certifications,
 #     })
+def profile_view(request):
+    user_id = request.session.get('user_id')
+
+    if not user_id:
+        messages.error(request, "You need to log in to view the profile.")
+        return redirect('login')
+
+    try:
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+        profile_data = ProfileSkillsCertifications.objects.get(profile=profile)
+        certifications = Certification.objects.filter(profile=profile_data)
+        education = Education.objects.filter(profile=profile)
+        experience = Experience.objects.filter(profile=profile)
+
+        return render(request, "profile_view.html", {
+            "user": user,
+            "profile": profile,
+            "profile_data": profile_data,
+            "certifications": certifications,
+            "education": education,
+            "experience": experience,
+        })
+
+    except (User.DoesNotExist, Profile.DoesNotExist, ProfileSkillsCertifications.DoesNotExist):
+        messages.error(request, "Profile data not found.")
+        return redirect('profile')  # fallback to edit page
+

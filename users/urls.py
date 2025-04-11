@@ -16,6 +16,8 @@ urlpatterns = [
     path('privacy/', views.privacy, name='privacy'),
     path('profile/', views.profile, name='profile'),
     #path('profileinfo/', views.profile_information, name='profileinfo'),
+    path('view-profile/', views.profile_view, name='profile_view'),
+
 
 
 ]
