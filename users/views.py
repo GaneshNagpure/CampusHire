@@ -141,14 +141,17 @@ def dashboard(request):
 
     # ✅ Ensure ProfileSkillsCertifications exists
     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+    certifications = skillscertifications.certifications.all()
+
 
     messages.success(request, f"Welcome back, {user.name}!")
 
     return render(request, 'dashboard.html', {
         'user': user,
         'profile': profile,
-        'skillscertifications': skillscertifications
-    })
+        'skillscertifications': skillscertifications,
+        'certifications': certifications,
+       })
 
 
 def logout(request):
@@ -332,8 +335,8 @@ def profile(request):
             certifications_combined = []
 
             # Combine name and file
-            for name, file in zip(certification_names, certification_files):
-                Certification.objects.create(profile=profile_data, name=name, file=file)
+            for certification_name, file in zip(certification_names, certification_files):
+                Certification.objects.create(profile=profile_data, certification_name=certification_name, file=file)
             profile_data.save()
 
 
@@ -346,3 +349,16 @@ def profile(request):
     except User.DoesNotExist:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
+
+from django.shortcuts import render, get_object_or_404
+
+# def profile_information(request):
+#     profile = get_object_or_404(Profile, user=request.user)
+#     skill_cert_data = get_object_or_404(ProfileSkillsCertifications, profile=profile)
+    
+#     certifications = skill_cert_data.certifications.all()  # Assuming related model
+#     return render(request, 'users/user_profile.html', {
+#         'profile': profile,
+#         'skills': skill_cert_data.skills,
+#         'certifications': certifications,
+#     })

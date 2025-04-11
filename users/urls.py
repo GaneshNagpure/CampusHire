@@ -15,6 +15,7 @@ urlpatterns = [
     path('ask-question/', views.ask_question, name='ask_question'),
     path('privacy/', views.privacy, name='privacy'),
     path('profile/', views.profile, name='profile'),
+    #path('profileinfo/', views.profile_information, name='profileinfo'),
 
 
 ]

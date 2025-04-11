@@ -89,7 +89,7 @@ class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
         return format_html_join(
             mark_safe('<br>'),
             '<a href="{}" target="_blank">{}</a>',
-            ((cert.file.url, cert.name) for cert in certifications)
+            ((cert.file.url, cert.certification_name) for cert in certifications)
         )
 
     display_skills.short_description = "Skills"
