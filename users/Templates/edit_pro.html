@@ -1,0 +1,290 @@
+{% extends "base/dashboardbase.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Edit Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Personal Info -->
+        <div class="mb-3">
+            <label>Headline</label>
+            <input type="text" class="form-control" name="headline" value="{{ profile.headline }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Contact</label>
+            <input type="text" class="form-control" name="contact" value="{{ profile.contact }}">
+        </div>
+
+        <div class="mb-3">
+            <label>GitHub</label>
+            <input type="text" class="form-control" name="github" value="{{ profile.github }}">
+        </div>
+
+        <div class="mb-3">
+            <label>LinkedIn</label>
+            <input type="text" class="form-control" name="linkedin" value="{{ profile.linkedin }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Profile Picture</label>
+            <input type="file" class="form-control" name="profile_pic">
+            {% if profile.profile_pic %}
+                <img src="{{ profile.profile_pic.url }}" class="img-thumbnail mt-2" width="100">
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label>Resume</label>
+            <input type="file" class="form-control" name="resume">
+            {% if profile.resume %}
+                <a href="{{ profile.resume.url }}" target="_blank">View Current Resume</a>
+            {% endif %}
+        </div>
+
+        <!-- Address & Details -->
+        <div class="mb-3">
+            <label>Street Address</label>
+            <input type="text" class="form-control" name="street_address" value="{{ profile.street_address }}">
+        </div>
+
+        <div class="mb-3">
+            <label>City</label>
+            <input type="text" class="form-control" name="city" value="{{ profile.city }}">
+        </div>
+
+        <div class="mb-3">
+            <label>State</label>
+            <input type="text" class="form-control" name="state" value="{{ profile.state }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Zip Code</label>
+            <input type="text" class="form-control" name="zip_code" value="{{ profile.zip_code }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Country</label>
+            <input type="text" class="form-control" name="country" value="{{ profile.country }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Enrollment</label>
+            <input type="text" class="form-control" name="enrollment" value="{{ profile.enrollment }}">
+        </div>
+
+        <div class="mb-3">
+            <label>Date of Birth</label>
+            <input type="date" class="form-control" name="dob" value="{{ profile.dob|date:'Y-m-d' }}">
+        </div>
+
+        <div id="education-section">
+            {% for edu in education_list %}
+            <div class="border p-3 mb-3 edu-entry position-relative">
+                <input type="text" class="form-control mb-2" name="education_level[]" value="{{ edu.education_level }}" placeholder="Education Level (e.g., Bachelor's)">
+                <input type="text" class="form-control mb-2" name="college[]" value="{{ edu.college }}" placeholder="College Name">
+                <input type="text" class="form-control" name="degree[]" value="{{ edu.degree }}" placeholder="Degree (e.g., BCA)">
+                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="deleteEntry(this)"></button>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="addEducation()">+ Add Education</button>
+        
+
+        <!-- Skills -->
+        <!-- <div class="mb-3">
+            <label>Skills (comma separated)</label>
+            <input type="text" class="form-control" name="skills[]" value="{{ profile_data.skills|join:', ' }}">
+        </div> -->
+        <div class="mb-3">
+            <label>Skills</label>
+            <div id="skills-section">
+                {% for skill in profile_data.skills %}
+                <div class="d-flex mb-2 skill-entry position-relative">
+                    <input type="text" class="form-control" name="skills[]" value="{{ skill }}">
+                    <button type="button" class="btn-close ms-2 mt-2" aria-label="Close" onclick="this.closest('.skill-entry').remove();"></button>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-success mt-2" onclick="addSkill()">+ Add Skill</button>
+        </div>
+        
+
+        <div id="experience-section">
+            {% for exp in experience_list %}
+            <div class="border p-3 mb-3 exp-entry position-relative">
+                <input type="text" class="form-control mb-2" name="company[]" value="{{ exp.company }}" placeholder="Company">
+                <input type="text" class="form-control mb-2" name="role[]" value="{{ exp.role }}" placeholder="Role">
+                <input type="date" class="form-control mb-2" name="start_date[]" value="{{ exp.start_date|date:'Y-m-d' }}" placeholder="Start Date">
+                <input type="date" class="form-control mb-2" name="end_date[]" value="{{ exp.end_date|date:'Y-m-d' }}" placeholder="End Date">
+                <select class="form-control" name="role_type[]">
+                    <option value="Full-Time" {% if exp.role_type == "Full-Time" %}selected{% endif %}>Full-Time</option>
+                    <option value="Internship" {% if exp.role_type == "Internship" %}selected{% endif %}>Internship</option>
+                </select>
+                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="deleteEntry(this)"></button>
+            </div>
+            {% endfor %}
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-success" onclick="addExperience()">+ Add Experience</button>
+
+
+        <!-- Certifications -->
+        <h4 class="mt-4">Certifications</h4>
+        <div id="certifications-section">
+            {% for cert in certifications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ cert.certification_name }}
+                <span>
+                    {% if cert.file %}
+                    <a href="{{ cert.file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">View</a>
+                    {% endif %}
+                    <a href="{% url 'delete_certification' cert.id %}" class="btn btn-sm btn-danger">Delete</a>
+                </span>
+            </li>
+            {% empty %}
+            <li class="list-group-item">No certifications found.</li>
+            {% endfor %}
+        </div>
+
+        <div class="mt-3">
+            <label>New Certification Name</label>
+            <input type="text" class="form-control" name="certifications[]">
+        </div>
+        <div class="mt-2">
+            <label>Upload Certificate File</label>
+            <input type="file" class="form-control" name="certification_files[]">
+        </div>
+        <button type="submit" class="btn btn-primary mt-4">Update Profile</button>
+    </form>
+</div>
+
+<script>
+
+function addSkill() {
+    const section = document.getElementById("skills-section");
+    const div = document.createElement("div");
+    div.className = "d-flex mb-2 skill-entry position-relative";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "skills[]";
+    input.className = "form-control";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-close ms-2 mt-2";
+    btn.setAttribute("aria-label", "Close");
+    btn.onclick = function () {
+        btn.closest(".skill-entry")?.remove();
+    };
+
+    div.appendChild(input);
+    div.appendChild(btn);
+    section.appendChild(div);
+}
+
+    function createDeleteButton() {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-close position-absolute top-0 end-0 mt-2 me-2";
+    btn.setAttribute("aria-label", "Close");
+    btn.onclick = function () {
+        btn.closest(".edu-entry")?.remove();
+        btn.closest(".exp-entry")?.remove();
+    };
+    return btn;
+}
+
+// Attach event listeners to existing delete buttons on page load
+document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".delete-entry");
+        deleteButtons.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+                btn.closest(".edu-entry")?.remove();
+                btn.closest(".exp-entry")?.remove();
+            });
+        });
+    });
+
+function addEducation() {
+    const section = document.getElementById("education-section");
+    const div = document.createElement("div");
+    div.className = "border p-3 mb-3 edu-entry position-relative";
+
+    const level = document.createElement("input");
+    level.type = "text";
+    level.name = "education_level[]";
+    level.placeholder = "Education Level (e.g., Bachelor's)";
+    level.className = "form-control mb-2";
+
+    const college = document.createElement("input");
+    college.type = "text";
+    college.name = "college[]";
+    college.placeholder = "College Name";
+    college.className = "form-control mb-2";
+
+    const degree = document.createElement("input");
+    degree.type = "text";
+    degree.name = "degree[]";
+    degree.placeholder = "Degree (e.g., BCA)";
+    degree.className = "form-control";
+
+    div.appendChild(level);
+    div.appendChild(college);
+    div.appendChild(degree);
+    div.appendChild(createDeleteButton());
+
+    section.appendChild(div);
+}
+
+function addExperience() {
+    const section = document.getElementById("experience-section");
+    const div = document.createElement("div");
+    div.className = "border p-3 mb-3 exp-entry position-relative";
+
+    const company = document.createElement("input");
+    company.type = "text";
+    company.name = "company[]";
+    company.placeholder = "Company";
+    company.className = "form-control mb-2";
+
+    const role = document.createElement("input");
+    role.type = "text";
+    role.name = "role[]";
+    role.placeholder = "Role";
+    role.className = "form-control mb-2";
+
+    const startDate = document.createElement("input");
+    startDate.type = "date";
+    startDate.name = "start_date[]";
+    startDate.className = "form-control mb-2";
+
+    const endDate = document.createElement("input");
+    endDate.type = "date";
+    endDate.name = "end_date[]";
+    endDate.className = "form-control mb-2";
+
+    const roleType = document.createElement("select");
+    roleType.name = "role_type[]";
+    roleType.className = "form-control mb-2";
+    roleType.innerHTML = `
+        <option value="Full-Time">Full-Time</option>
+        <option value="Internship">Internship</option>
+    `;
+
+    div.appendChild(company);
+    div.appendChild(role);
+    div.appendChild(startDate);
+    div.appendChild(endDate);
+    div.appendChild(roleType);
+    div.appendChild(createDeleteButton());
+
+    section.appendChild(div);
+}
+
+</script>
+
+
+{% endblock %}

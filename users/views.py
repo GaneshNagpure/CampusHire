@@ -264,7 +264,7 @@ def ask_question(request):
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import User, Profile, Education, Experience, ProfileSkillsCertifications
+from .models import User, Profile, Education, Experience, ProfileSkillsCertifications, Certification
 from django.core.files.storage import FileSystemStorage
 def profile(request):
     user_id = request.session.get('user_id')
@@ -352,16 +352,6 @@ def profile(request):
 
 from django.shortcuts import render, get_object_or_404
 
-# def profile_information(request):
-#     profile = get_object_or_404(Profile, user=request.user)
-#     skill_cert_data = get_object_or_404(ProfileSkillsCertifications, profile=profile)
-    
-#     certifications = skill_cert_data.certifications.all()  # Assuming related model
-#     return render(request, 'users/user_profile.html', {
-#         'profile': profile,
-#         'skills': skill_cert_data.skills,
-#         'certifications': certifications,
-#     })
 def profile_view(request):
     user_id = request.session.get('user_id')
 
@@ -389,4 +379,329 @@ def profile_view(request):
     except (User.DoesNotExist, Profile.DoesNotExist, ProfileSkillsCertifications.DoesNotExist):
         messages.error(request, "Profile data not found.")
         return redirect('profile')  # fallback to edit page
+from django.http import FileResponse, Http404
+from .models import Certification 
 
+def download_certificate(request, cert_id):
+    try:
+        cert = Certification.objects.get(id=cert_id)
+        return FileResponse(cert.file.open(), as_attachment=True, filename=cert.file.name)
+    except Certification.DoesNotExist:
+        raise Http404("Certificate not found")
+    
+# def edit_profile(request):
+#     user_id = request.session.get('user_id')
+    
+#     if not user_id:
+#         messages.error(request, "You need to log in to view your profile.")
+#         return redirect('login')
+
+#     try:
+#         user = User.objects.get(id=user_id)
+#         profile, created = Profile.objects.get_or_create(user=user)
+#         profile_data, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+#         certifications = profile_data.certifications.all()
+
+#         if request.method == "POST":
+#             # Update profile details
+#             profile.headline = request.POST.get("headline")
+#             profile.contact = request.POST.get("contact")
+#             profile.github = request.POST.get("github")
+#             profile.linkedin = request.POST.get("linkedin")
+#             profile.profile_pic = request.FILES.get("profile_pic") or profile.profile_pic
+#             profile.resume = request.FILES.get("resume") or profile.resume
+#             profile.street_address = request.POST.get("street_address")
+#             profile.city = request.POST.get("city")
+#             profile.state = request.POST.get("state")
+#             profile.zip_code = request.POST.get("zip_code")
+#             profile.country = request.POST.get("country")
+#             profile.enrollment =request.POST.get("enrollment")
+#             profile.dob = request.POST.get("dob")
+#             profile.save()
+
+#             # Clear and save other profile details
+#             Education.objects.filter(profile=profile).delete()
+#             Experience.objects.filter(profile=profile).delete()
+
+#             for level, college, degree in zip(
+#                 request.POST.getlist("education_level[]"),
+#                 request.POST.getlist("college[]"),
+#                 request.POST.getlist("degree[]")
+#             ):
+#                 if college and degree:
+#                     Education.objects.create(profile=profile, education_level=level, college=college, degree=degree)
+
+#             for company, role, start_date, end_date, role_type in zip(
+#                 request.POST.getlist("company[]"),
+#                 request.POST.getlist("role[]"),
+#                 request.POST.getlist("start_date[]"),
+#                 request.POST.getlist("end_date[]"),
+#                 request.POST.getlist("role_type[]")
+#             ):
+#                 if company and role:
+#                     Experience.objects.create(
+#                         profile=profile,
+#                         company=company,
+#                         role=role,
+#                         start_date=start_date,
+#                         end_date=end_date if end_date else None,
+#                         role_type=role_type
+#                     )
+
+#             # ✅ Store skills & certifications as lists instead of separate models
+#             profile_data.skills = request.POST.getlist("skills[]")
+#             # profile_data.certifications = request.POST.getlist("certifications[]")
+#             # profile_data.save()
+#             # Get certification names and uploaded files
+#             certification_names = request.POST.getlist("certifications[]")
+#             certification_files = request.FILES.getlist("certification_files[]")
+
+#             certifications_combined = []
+
+#             # Combine name and file
+#             for certification_name, file in zip(certification_names, certification_files):
+#                 Certification.objects.create(profile=profile_data, certification_name=certification_name, file=file)
+#             profile_data.save()
+
+
+
+#             messages.success(request, "Profile updated successfully!")
+#             return redirect("profile")  # ✅ Redirect after POST
+
+#         # ✅ Handle GET request (Render the profile page)
+#         return render(request, "edit_profile.html", {"user": user, "profile": profile, "profile_data": profile_data, "certifications": certifications})
+
+#     except User.DoesNotExist:
+#         messages.error(request, "User not found. Please log in again.")
+#         return redirect('login')
+
+from django.views.decorators.csrf import csrf_exempt
+
+# @csrf_exempt
+# def edit_profile(request):
+#     user_id = request.session.get('user_id')
+    
+#     if not user_id:
+#         messages.error(request, "You need to log in to view your profile.")
+#         return redirect('login')
+
+#     try:
+#         user = User.objects.get(id=user_id)
+#         profile, created = Profile.objects.get_or_create(user=user)
+#         profile_data, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+
+#         if request.method == "POST":
+#             # Update profile fields
+#             profile.headline = request.POST.get("headline")
+#             profile.contact = request.POST.get("contact")
+#             profile.github = request.POST.get("github")
+#             profile.linkedin = request.POST.get("linkedin")
+#             profile.profile_pic = request.FILES.get("profile_pic") or profile.profile_pic
+#             profile.resume = request.FILES.get("resume") or profile.resume
+#             profile.street_address = request.POST.get("street_address")
+#             profile.city = request.POST.get("city")
+#             profile.state = request.POST.get("state")
+#             profile.zip_code = request.POST.get("zip_code")
+#             profile.country = request.POST.get("country")
+#             profile.enrollment = request.POST.get("enrollment")
+#             profile.dob = request.POST.get("dob")
+#             profile.save()
+
+#             # Clear and re-create education entries
+#             Education.objects.filter(profile=profile).delete()
+#             for level, college, degree in zip(
+#                 request.POST.getlist("education_level[]"),
+#                 request.POST.getlist("college[]"),
+#                 request.POST.getlist("degree[]")
+#             ):
+#                 if college and degree:
+#                     Education.objects.create(profile=profile, education_level=level, college=college, degree=degree)
+
+#             # Clear and re-create experience entries
+#             Experience.objects.filter(profile=profile).delete()
+#             for company, role, start_date, end_date, role_type in zip(
+#                 request.POST.getlist("company[]"),
+#                 request.POST.getlist("role[]"),
+#                 request.POST.getlist("start_date[]"),
+#                 request.POST.getlist("end_date[]"),
+#                 request.POST.getlist("role_type[]")
+#             ):
+#                 if company and role:
+#                     Experience.objects.create(
+#                         profile=profile,
+#                         company=company,
+#                         role=role,
+#                         start_date=start_date,
+#                         end_date=end_date if end_date else None,
+#                         role_type=role_type
+#                     )
+
+#             # Update skills
+#             profile_data.skills = request.POST.getlist("skills[]")
+#             profile_data.save()
+
+#             # Delete selected certifications
+#             certs_to_delete = request.POST.getlist("delete_cert_ids[]")
+#             if certs_to_delete:
+#                 Certification.objects.filter(id__in=certs_to_delete).delete()
+
+#             # Add new certifications
+#             cert_names = request.POST.getlist("certifications[]")
+#             cert_files = request.FILES.getlist("certification_files[]")
+#             for name, file in zip(cert_names, cert_files):
+#                 if name or file:
+#                     Certification.objects.create(profile=profile_data, certification_name=name, file=file)
+
+#             messages.success(request, "Profile updated successfully!")
+#             return redirect("profile")
+
+#         # GET request: show existing data
+#         certifications = profile_data.certifications.all()
+#         education_list = Education.objects.filter(profile=profile)
+#         experience_list = Experience.objects.filter(profile=profile)
+
+#         return render(request, "edit_pro.html", {
+#             "user": user,
+#             "profile": profile,
+#             "profile_data": profile_data,
+#             "certifications": certifications,
+#             "education_list": education_list,
+#             "experience_list": experience_list
+#         })
+
+#     except User.DoesNotExist:
+#         messages.error(request, "User not found. Please log in again.")
+#         return redirect('login')
+
+
+from django.views.decorators.csrf import csrf_protect
+from django.db import transaction
+from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import User, Profile, ProfileSkillsCertifications, Education, Experience, Certification
+
+@csrf_protect
+def edit_profile(request):
+    user_id = request.session.get('user_id')
+    
+    if not user_id:
+        messages.error(request, "You need to log in to view your profile.")
+        return redirect('login')
+
+    try:
+        user = User.objects.get(id=user_id)
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile_data, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+
+        if request.method == "POST":
+            with transaction.atomic():
+                # Update profile fields
+                profile.headline = request.POST.get("headline")
+                profile.contact = request.POST.get("contact")
+                profile.github = request.POST.get("github")
+                profile.linkedin = request.POST.get("linkedin")
+                profile.profile_pic = request.FILES.get("profile_pic") or profile.profile_pic
+                profile.resume = request.FILES.get("resume") or profile.resume
+                profile.street_address = request.POST.get("street_address")
+                profile.city = request.POST.get("city")
+                profile.state = request.POST.get("state")
+                profile.zip_code = request.POST.get("zip_code")
+                profile.country = request.POST.get("country")
+                profile.enrollment = request.POST.get("enrollment")
+
+                try:
+                    profile.dob = datetime.strptime(request.POST.get("dob"), "%Y-%m-%d").date()
+                except (ValueError, TypeError):
+                    profile.dob = None
+
+                profile.save()
+
+                # Delete selected education records
+                edu_delete_ids = request.POST.getlist("delete_edu_ids[]")
+                if edu_delete_ids:
+                    Education.objects.filter(id__in=edu_delete_ids, profile=profile).delete()
+
+                # Recreate or update education entries
+                Education.objects.filter(profile=profile).exclude(id__in=edu_delete_ids).delete()
+                for level, college, degree in zip(
+                    request.POST.getlist("education_level[]"),
+                    request.POST.getlist("college[]"),
+                    request.POST.getlist("degree[]")
+                ):
+                    if college and degree:
+                        Education.objects.create(profile=profile, education_level=level, college=college, degree=degree)
+
+                # Delete selected experience records
+                exp_delete_ids = request.POST.getlist("delete_exp_ids[]")
+                if exp_delete_ids:
+                    Experience.objects.filter(id__in=exp_delete_ids, profile=profile).delete()
+
+                # Recreate or update experience entries
+                Experience.objects.filter(profile=profile).exclude(id__in=exp_delete_ids).delete()
+                for company, role, start_date, end_date, role_type in zip(
+                    request.POST.getlist("company[]"),
+                    request.POST.getlist("role[]"),
+                    request.POST.getlist("start_date[]"),
+                    request.POST.getlist("end_date[]"),
+                    request.POST.getlist("role_type[]")
+                ):
+                    if company and role:
+                        Experience.objects.create(
+                            profile=profile,
+                            company=company,
+                            role=role,
+                            start_date=start_date or None,
+                            end_date=end_date or None,
+                            role_type=role_type
+                        )
+
+                # Update skills
+                profile_data.skills = request.POST.getlist("skills[]")
+                profile_data.save()
+
+                # Delete selected certifications
+                certs_to_delete = request.POST.getlist("delete_cert_ids[]")
+                if certs_to_delete:
+                    Certification.objects.filter(id__in=certs_to_delete).delete()
+
+                # Add new certifications
+                cert_names = request.POST.getlist("certifications[]")
+                cert_files = request.FILES.getlist("certification_files[]")
+                for name, file in zip(cert_names, cert_files):
+                    if name and file:
+                        Certification.objects.create(profile=profile_data, certification_name=name, file=file)
+
+            messages.success(request, "Profile updated successfully!")
+            return redirect("profile")
+
+        # GET request: show existing data
+        certifications = profile_data.certifications.all()
+        education_list = Education.objects.filter(profile=profile)
+        experience_list = Experience.objects.filter(profile=profile)
+
+        return render(request, "edit_pro.html", {
+            "user": user,
+            "profile": profile,
+            "profile_data": profile_data,
+            "certifications": certifications,
+            "education_list": education_list,
+            "experience_list": experience_list
+        })
+
+    except User.DoesNotExist:
+        messages.error(request, "User not found. Please log in again.")
+        return redirect('login')
+
+from django.shortcuts import get_object_or_404
+
+def delete_certification(request, cert_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Login required.")
+        return redirect('login')
+
+    certification = get_object_or_404(Certification, id=cert_id, profile__profile__user_id=user_id)
+    certification.delete()
+    messages.success(request, "Certification deleted.")
+    return redirect('edit_profile')
