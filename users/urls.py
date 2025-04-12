@@ -20,6 +20,8 @@ urlpatterns = [
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('download/certificate/<int:cert_id>/', views.download_certificate, name='download_certificate'),
     path('delete-certification/<int:cert_id>/', views.delete_certification, name='delete_certification'),
+    path('change-password/', views.change_password, name='change_password'),
+
 
 
 

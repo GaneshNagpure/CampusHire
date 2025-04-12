@@ -1,13 +1,21 @@
 {% extends 'base/base.html' %}
 
 {% block title %}Contact Us | Zeal College Placement Portal{% endblock %}
+{% load static %}
+
+{% block header %}
+    <h1 class="text-center mt-4">Contact Us</h1>
+    <p class="text-center text-muted">We are here to assist you with any queries or concerns.</p>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row align-items-center">
         <!-- Left Side - Image -->
         <div class="col-md-6 mb-4">
-            <img src="https://via.placeholder.com/600x400" alt="Contact Us" class="img-fluid rounded">
+            <!-- <img src="https://via.placeholder.com/600x400" alt="Contact Us" class="img-fluid rounded"> -->
+            <img src="{% static 'images/contact.jpg' %}" alt="College Logo" class="img-fluid" style="max-width: 100%; height: auto; width: 600px;" />
+            <!--  -->
         </div>
 
         <!-- Right Side - Form -->

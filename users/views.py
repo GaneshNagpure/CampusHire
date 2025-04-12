@@ -705,3 +705,37 @@ def delete_certification(request, cert_id):
     certification.delete()
     messages.success(request, "Certification deleted.")
     return redirect('edit_profile')
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User  # Make sure to import your custom User model
+
+def change_password(request):
+    if 'user_id' not in request.session:
+        messages.error(request, "Please log in to change your password.")
+        return redirect('login')
+
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        try:
+            user = User.objects.get(id=request.session['user_id'])
+
+            if user.password != current_password:
+                messages.error(request, "Current password is incorrect.")
+            elif new_password != confirm_password:
+                messages.error(request, "New passwords do not match.")
+            else:
+                user.password = new_password  # You might want to hash this in real apps
+                user.save()
+                messages.success(request, "Password changed successfully!")
+                return redirect('dashboard')
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found. Please log in again.")
+            return redirect('login')
+
+    return render(request, 'change_password.html')
