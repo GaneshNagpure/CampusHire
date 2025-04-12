@@ -2,6 +2,8 @@
 {% block title %}Register Page{% endblock %}
 
 {% block content %}
+{% load static %}
+
 <div class="d-flex flex-column min-vh-100">
   <div class="container mt-4">
     <div class="row justify-content-center">
@@ -22,13 +24,14 @@
           </div>
         </div>
 
-        <!-- College Logo Div -->
+        <!-- College Logo Div-->
         <div class="mt-4 text-center">
           <div class="card shadow-lg p-3" style="border-radius: 25px; background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
             <!-- Add your logo inside this div -->
-            <h5 class="fw-bold">College Logo Here</h5>
+            <img src="{% static 'images\college logo.jpg' %}" alt="College Logo" class="img-fluid" style="max-width: 200px; height: auto;" />
+            <!-- <h5 class="fw-bold">College Logo Here</h5> -->
           </div>
-        </div>
+        </div> 
       </div>
 
       <!-- Registration Form Div -->

@@ -193,7 +193,7 @@
                          <input type="file" class="form-control" name="resume" accept=".pdf,.doc,.docx">
                     </div>
                     <button type="button" class="btn btn-secondary prev-step">Previous</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success">Save</button>
                 </div>
             </form>
             
@@ -210,11 +210,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const prevButtons = document.querySelectorAll(".prev-step");
     const instructionText = document.getElementById("instructionText");
     const instructions = [
-        "<p><strong>Step 1:</strong> Enter your personal details like name, email, phone, address and social profiles .</p>",
-        "<p><strong>Step 2:</strong> Add your educational background. Include your college name and degree.</p>",
-        "<p><strong>Step 3:</strong> List your work experience, if any.</p>",
-        "<p><strong>Step 4:</strong> Mention your skills and certifications.</p>",
-        "<p><strong>Step 5:</strong> Upload your profile picture and resume.</p>",
+        // "<p><strong>Step 1:</strong> Enter your personal details like name, email, phone, address and social profiles .</p>",
+        // "<p><strong>Step 2:</strong> Add your educational background. Include your college name and degree.</p>",
+        // "<p><strong>Step 3:</strong> List your work experience, if any.</p>",
+        // "<p><strong>Step 4:</strong> Mention your skills and certifications.</p>",
+        // "<p><strong>Step 5:</strong> Upload your profile picture and resume.</p>",
+        
+    "<p><strong>Step 1:</strong> Enter your personal details such as full name, email address, mobile number, and residential address. Optionally, you can also add links to your social profiles like LinkedIn, GitHub, or personal portfolio to help recruiters know more about you.</p>",
+
+    "<p><strong>Step 2:</strong> Add your educational background. Include details such as your college or university name, degree obtained, specialization, year of graduation, and academic achievements or relevant coursework if any.</p>",
+
+    "<p><strong>Step 3:</strong> List your work experience. If you have worked before, mention your job titles, company names, duration of employment, and a short description of your responsibilities and contributions. Internships and freelance work also count.</p>",
+
+    "<p><strong>Step 4:</strong> Highlight your skills and certifications. Add technical skills (e.g., Python, Django, SQL), soft skills (e.g., communication, teamwork), and any certifications you've completed from platforms like Coursera, Udemy, or official organizations.</p>",
+
+    ["<p><strong>Step 5:</strong> Upload your profile picture and resume. Your profile picture helps personalize your application, and a well-formatted resume gives recruiters a quick overview of your qualifications and experience.</p>",
+
+    "<p><strong>Step 6:</strong> Review all the entered information before submission. Make sure everything is accurate, up-to-date, and free of grammatical errors. A polished profile increases your chances of getting shortlisted.</p>",
+
+    "<p><strong>Step 7:</strong> Save your profile and start applying for job openings that match your interests and qualifications. Keep your profile updated regularly to reflect your latest achievements.</p>"
+    ]
+
     ];
 
     function showStep(index) {

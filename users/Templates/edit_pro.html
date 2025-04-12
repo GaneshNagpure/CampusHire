@@ -86,7 +86,8 @@
                 <input type="text" class="form-control mb-2" name="education_level[]" value="{{ edu.education_level }}" placeholder="Education Level (e.g., Bachelor's)">
                 <input type="text" class="form-control mb-2" name="college[]" value="{{ edu.college }}" placeholder="College Name">
                 <input type="text" class="form-control" name="degree[]" value="{{ edu.degree }}" placeholder="Degree (e.g., BCA)">
-                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="deleteEntry(this)"></button>
+                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="this.closest('.edu-entry').remove();"></button>
+
             </div>
             {% endfor %}
         </div>
@@ -123,7 +124,9 @@
                     <option value="Full-Time" {% if exp.role_type == "Full-Time" %}selected{% endif %}>Full-Time</option>
                     <option value="Internship" {% if exp.role_type == "Internship" %}selected{% endif %}>Internship</option>
                 </select>
-                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="deleteEntry(this)"></button>
+                <!-- <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="deleteEntry(this)"></button> -->
+                <button type="button" class="btn-close position-absolute top-0 end-0 mt-2 me-2" aria-label="Close" onclick="this.closest('.exp-entry').remove();"></button>
+
             </div>
             {% endfor %}
         </div>
