@@ -739,3 +739,75 @@ def change_password(request):
             return redirect('login')
 
     return render(request, 'change_password.html')
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User, PasswordResetOTP
+from django.core.mail import send_mail
+import random
+
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            otp = str(random.randint(100000, 999999))
+            PasswordResetOTP.objects.create(email=email, otp=otp)
+
+            send_mail(
+                'Your OTP for Password Reset',
+                f'Your OTP is: {otp}',
+                'your-email@gmail.com',         # same as EMAIL_HOST_USER
+                [email],
+                fail_silently=False,
+            )
+
+            request.session['reset_email'] = email
+            return redirect('verify_otp')
+        except User.DoesNotExist:
+            messages.error(request, "No user found with this email.")
+    return render(request, 'auth/forgot_password.html')
+
+
+def verify_otp(request):
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('forgot_password')
+
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        try:
+            latest_otp = PasswordResetOTP.objects.filter(email=email).latest('created_at')
+            if latest_otp.otp == entered_otp and not latest_otp.is_expired():
+                return redirect('reset_password')
+            else:
+                messages.error(request, "Invalid or expired OTP.")
+        except PasswordResetOTP.DoesNotExist:
+            messages.error(request, "OTP not found. Please request again.")
+
+    return render(request, 'auth/verify_otp.html')
+
+
+def reset_password(request):
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('forgot_password')
+
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+        else:
+            try:
+                user = User.objects.get(email=email)
+                user.password = new_password
+                user.save()
+                messages.success(request, "Password successfully changed.")
+                del request.session['reset_email']
+                return redirect('login')
+            except User.DoesNotExist:
+                messages.error(request, "User not found.")
+
+    return render(request, 'auth/reset_password.html')

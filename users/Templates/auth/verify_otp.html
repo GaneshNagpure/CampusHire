@@ -1,0 +1,15 @@
+{% extends 'base/dashboardbase.html' %}
+{% block content %}
+<div class="form-container">
+  <h2>Verify OTP</h2>
+  {% for message in messages %}
+    <p style="color: red;">{{ message }}</p>
+  {% endfor %}
+  <form method="POST">
+    {% csrf_token %}
+    <label>Enter OTP sent to your email:</label>
+    <input type="text" name="otp" required>
+    <button type="submit">Verify OTP</button>
+  </form>
+</div>
+{% endblock %}
