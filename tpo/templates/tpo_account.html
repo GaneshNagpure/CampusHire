@@ -1,0 +1,54 @@
+{% extends 'base1.html' %}
+
+{% block title %}Dashboard FOOD DELIVERY{% endblock %}
+
+{% block content %}
+<div class="login-section">
+    <div class="card shadow-lg p-4">
+       <h3 class="text-center mb-4">Registration</h3>
+       <div class="card-body">
+           {% if messages %}
+               {% for message in messages %}
+                   <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+                       {{ message }}
+                   </div>
+               {% endfor %}
+           {% endif %}
+           <form method="POST" action="{% url 'tpo_registration' %}">
+               {% csrf_token %}
+               <div class="mb-3">
+                   <label class="form-label">Full Name</label>
+                   <input type="text" class="form-control" name="full_name" value="{{ full_name|default:'' }}" required>
+               </div>
+               <div class="mb-3">
+                   <label class="form-label">Emppoyee Id</label>
+                   <input type="text" class="form-control" name="employee_id" value="{{  employee_id|default:'' }}" required>
+               </div>
+               <div class="mb-3">
+                   <label class="form-label">Email</label>
+                   <input type="email" class="form-control" name="email" placeholder="Enter Email" value="{{ email|default:'' }}" required>
+                   
+               </div>
+               <div class="mb-3">
+                   <label class="form-label">Mobile Number</label>
+                   <input type="tel" class="form-control" name="mobile" value="{{ mobile_number|default:'' }}" required>
+               </div>
+              
+               <div class="mb-3">
+                   <label class="form-label">Password</label>
+                   <input type="password" class="form-control" name="password" required>
+               </div>
+               <div class="mb-3">
+                   <label class="form-label">Confirm Password</label>
+                   <input type="password" class="form-control" name="confirm_password" required>
+               </div>
+               <div class="d-grid gap-2">
+               <button type="submit" class="btn btn-primary">Update</button>
+           </div>
+           </form>
+          
+       </div>
+   </div>
+</div>
+
+{% endblock %}
