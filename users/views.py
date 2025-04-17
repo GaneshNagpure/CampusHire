@@ -858,6 +858,10 @@ from django.core.mail import send_mail
 import random
 
 def forgot_password(request):
+    if 'user_id' not in request.session:
+        messages.error(request, "Please log in to change your password.")
+
+        return redirect('login')
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
@@ -881,6 +885,9 @@ def forgot_password(request):
 
 
 def verify_otp(request):
+    if 'user_id' not in request.session:
+        messages.error(request, "Please log in to verify otp.")
+        return redirect('login')
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
@@ -900,6 +907,9 @@ def verify_otp(request):
 
 
 def reset_password(request):
+    if 'user_id' not in request.session:
+        messages.error(request, "Please log in to reset your password.")
+        return redirect('login')
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
