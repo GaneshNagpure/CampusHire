@@ -45,7 +45,10 @@
                 <div class="col-md-4">
                     <div class="card bg-primary text-white mb-3">
                         <div class="card-body">
-                            <h5 class="card-title"><i class="fas fa-check-circle"></i> Applied Jobs</h5>
+                            <!-- <h5 class="card-title"><i class="fas fa-check-circle"></i> Applied Jobs</h5> -->
+                            <a href="{% url 'my_applications' %}" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-check-circle"></i> My Applications
+                            </a>
                             <p class="card-text">{{ applications|length }} jobs applied</p>
                         </div>
                     </div>
@@ -89,7 +92,7 @@
                         <small class="text-muted">Location: {{ job.job_location }} | Salary: ₹{{ job.salary_package }}</small><br>
                         <small class="text-muted">Apply before: {{ job.last_date_to_apply }}</small>
                     </div>
-                    <a href="" class="btn btn-sm btn-outline-success mt-2">Apply</a>
+                    <a href="{% url 'apply_for_job' job.id %}" class="btn btn-sm btn-outline-success mt-2">Apply</a>
                 </li>
                 {% endfor %}
             </ul>

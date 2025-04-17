@@ -96,3 +96,12 @@ class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
     display_certifications.short_description = "Certifications"
 
 admin.site.register(ProfileSkillsCertifications, ProfileSkillsCertificationsAdmin)
+
+from django.contrib import admin
+from .models import JobApplication
+
+@admin.register(JobApplication)
+class JobApplicationAdmin(admin.ModelAdmin):
+    list_display = ('student', 'job', 'applied_at')
+    list_filter = ('job', 'applied_at')
+    search_fields = ('student__name', 'job__role')

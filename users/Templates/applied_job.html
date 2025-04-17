@@ -1,0 +1,14 @@
+{% extends "base/dashboardbase.html" %}
+
+{% block title %}Apply for Job{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Apply for {{ job.role }} at {{ job.company }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Apply</button>
+    </form>
+</div>
+{% endblock %}

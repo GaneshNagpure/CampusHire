@@ -161,6 +161,77 @@ from django.contrib import messages
 from .models import User, Profile, ProfileSkillsCertifications
 from tpo.models import Job  # Make sure this import exists
 
+# def dashboard(request):
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+    
+#     user_id = request.session['user_id']
+#     user = User.objects.get(id=user_id)from django.shortcuts import get_object_or_404
+
+#     # Ensure profile exists
+#     profile, created = Profile.objects.get_or_create(user=user)
+
+#     # Ensure skills/certs exist
+#     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+#     certifications = skillscertifications.certifications.all()
+
+#     # ✅ Fetch only active jobs
+#     recommended_jobs = Job.objects.filter(is_active=True).order_by('-id')
+
+#     messages.success(request, f"Welcome back, {user.name}!")
+
+#     return render(request, 'dashboard.html', {
+#         'user': user,
+#         'profile': profile,
+#         'skillscertifications': skillscertifications,
+#         'certifications': certifications,
+#         'recommended_jobs': recommended_jobs,
+#     })
+
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from .models import User, Profile, ProfileSkillsCertifications
+# from tpo.models import Job
+# from .models import JobApplication
+
+# def dashboard(request):
+#     # Check session for custom login
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+
+#     # Get the logged-in user
+#     user_id = request.session['user_id']
+#     user = User.objects.get(id=user_id)
+
+#     # Ensure profile exists
+#     profile, created = Profile.objects.get_or_create(user=user)
+
+#     # Ensure skills & certifications exist
+#     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+#     certifications = skillscertifications.certifications.all()
+
+#     # ✅ Fetch active jobs
+#     recommended_jobs = Job.objects.filter(is_active=True).order_by('-id')
+
+#     # ✅ Fetch jobs already applied by this student
+#     applied_job_ids = JobApplication.objects.filter(student=user).values_list('job_id', flat=True)
+
+#     messages.success(request, f"Welcome back, {user.name}!")
+
+#     return render(request, 'dashboard.html', {
+#         'user': user,
+#         'profile': profile,
+#         'skillscertifications': skillscertifications,
+#         'certifications': certifications,
+#         'recommended_jobs': recommended_jobs,
+#         'applied_job_ids': applied_job_ids,  # Pass to template for disabling/enabling Apply button
+#     })
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User, Profile, ProfileSkillsCertifications, JobApplication
+from tpo.models import Job
+
 def dashboard(request):
     if 'user_id' not in request.session:
         return redirect('login')
@@ -175,8 +246,11 @@ def dashboard(request):
     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
     certifications = skillscertifications.certifications.all()
 
-    # ✅ Fetch only active jobs
+    # Fetch recommended active jobs
     recommended_jobs = Job.objects.filter(is_active=True).order_by('-id')
+
+    # Fetch all jobs applied by the student
+    applications = JobApplication.objects.filter(student=user)
 
     messages.success(request, f"Welcome back, {user.name}!")
 
@@ -186,8 +260,8 @@ def dashboard(request):
         'skillscertifications': skillscertifications,
         'certifications': certifications,
         'recommended_jobs': recommended_jobs,
+        'applications': applications,
     })
-
 
 
 
@@ -858,3 +932,40 @@ def alumni_list_student(request):
      # Assuming you have a user session
     return render(request, 'alumni1_list.html', {'alumni': alumni, 'profile': profile})
 
+
+
+from .models import JobApplication
+from django.utils import timezone
+
+def apply_for_job(request, job_id):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    user = get_object_or_404(User, id=request.session['user_id'])
+    job = get_object_or_404(Job, id=job_id)
+
+    # Check if already applied
+    if JobApplication.objects.filter(student=user, job=job).exists():
+        messages.warning(request, "You have already applied for this job.")
+    else:
+        JobApplication.objects.create(student=user, job=job, applied_at=timezone.now())
+        messages.success(request, f"You successfully applied to {job.role} at {job.company}.")
+
+    return redirect('dashboard')
+
+from django.shortcuts import render, redirect
+from .models import JobApplication
+
+def my_applications(request):
+    if 'user_id' not in request.session:
+        return redirect('login')
+
+    user_id = request.session['user_id']
+    user = User.objects.get(id=user_id)
+
+    applications = JobApplication.objects.filter(student=user).select_related('job')
+
+    return render(request, 'applications.html', {
+        'user': user,
+        'applications': applications,
+    })
