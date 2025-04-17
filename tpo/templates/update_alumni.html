@@ -1,0 +1,16 @@
+{% extends 'base1.html' %}
+{% block content %}
+<div class="container">
+    <h2>Update Alumni</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <input class="form-control my-2" type="text" name="name" value="{{ alumni.name }}" required>
+        <input class="form-control my-2" type="email" name="email" value="{{ alumni.email }}" required>
+        <input class="form-control my-2" type="text" name="course" value="{{ alumni.course }}" required>
+        <input class="form-control my-2" type="number" name="passing_year" value="{{ alumni.passing_year }}" required>
+        <input class="form-control my-2" type="text" name="current_company" value="{{ alumni.current_company }}" required>
+        <input class="form-control my-2" type="text" name="position" value="{{ alumni.position }}" required>
+        <button type="submit" class="btn btn-primary mt-3">Update Alumni</button>
+    </form>
+</div>
+{% endblock %}

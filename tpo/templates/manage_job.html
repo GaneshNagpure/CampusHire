@@ -1,45 +1,53 @@
 {% extends 'base1.html' %}
-
-{% block title %}Dashboard FOOD DELIVERY{% endblock %}
-
 {% block content %}
+<div class="w-full max-w-full mx-auto p-6">
+    <h2 class="text-2xl font-bold mb-6">Available Jobs</h2>
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="w-full text-sm text-left text-gray-900">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-4 py-2 min-w-[120px]">Company Name</th>
+                    <th class="px-4 py-2 min-w-[180px]">Job Description</th>
+                    <th class="px-4 py-2 min-w-[100px]">Role</th>
+                    <th class="px-4 py-2 min-w-[100px]">Salary</th>
+                    <th class="px-4 py-2 min-w-[100px]">Eligibility</th>
+                    <th class="px-4 py-2 min-w-[180px]">Company Website</th>
+                    <th class="px-4 py-2 min-w-[100px]">Location</th>
+                    <th class="px-4 py-2 min-w-[120px]">Last Date</th>
+                    <th class="px-4 py-2 min-w-[120px]">Status</th>
+                    <th class="px-4 py-2 min-w-[160px]">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="px-4 py-2">{{ job.company }}</td>
+                    <td class="px-4 py-2">{{ job.job_description }}</td>
+                    <td class="px-4 py-2">{{ job.role }}</td>
+                    <td class="px-4 py-2">₹{{ job.salary_package }}</td>
+                    <td class="px-4 py-2">{{ job.eligibility }}</td>
+                    <td class="px-4 py-2 break-all">{{ job.company_website }}</td>
+                    <td class="px-4 py-2">{{ job.job_location }}</td>
+                    <td class="px-4 py-2">{{ job.last_date_to_apply }}</td>
 
-<h2 class="text-2xl font-bold mb-4">Food Items</h2>
+                    <!-- Job Status Button -->
+                    <td class="px-4 py-2 text-center">
+                        {% if job.is_active %}
+                        <a href="{% url 'toggle-job-status' job.id %}" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-400 text-sm">Active</a>
+                        {% else %}
+                        <a href="{% url 'toggle-job-status' job.id %}" class="bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-400 text-sm">Inactive</a>
+                        {% endif %}
+                    </td>
 
-<div class="w-full">
-    <table class="w-full bg-white border border-gray-300 shadow-md rounded-lg">
-        <thead class="bg-gray-800 text-white">
-            <tr>
-                <th class="py-2 px-2 md:px-4 text-left">Company Name</th>
-                <th class="py-2 px-2 md:px-4 text-left hidden md:table-cell">Job Description</th>
-                <th class="py-2 px-2 md:px-4 text-left">Role </th>
-                <th class="py-2 px-2 md:px-4 text-left">Sallary</th>
-                <th class="py-2 px-2 md:px-4 text-left">Eligibility</th>
-                <th class="py-2 px-2 md:px-4 text-left">Company Wbsite</th>
-                <th class="py-2 px-2 md:px-4 text-left">Company Location</th>
-                <th class="py-2 px-2 md:px-4 text-left">Last Date To applay</th>
-                <th class="py-2 px-2 md:px-4 text-left">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-300">
-            {% for job in jobs %}
-            <tr class="hover:bg-gray-100">
-                <td class="py-2 px-2 md:px-4">{{ job.company }}</td>
-                <td class="py-2 px-2 md:px-4 hidden md:table-cell">{{ job.job_description}}</td>
-                <td class="py-2 px-2 md:px-4">{{ job.role}}</td>
-                <td class="py-2 px-2 md:px-4">₹{{ job.salary_package }}</td>
-                <td class="py-2 px-2 md:px-4 font-semibold text-green-600">{{ job.eligibility }}</td>
-                <td class="py-2 px-2 md:px-4">{{ job.company_website }}</td>
-                <td class="py-2 px-2 md:px-4">{{ job.job_location }}</td>
-                <td class="py-2 px-2 md:px-4"> {{ job.last_date_to_apply }}</td>
-                <td class="py-2 px-2 md:px-4 flex flex-wrap gap-2">
-                    <a href="{% url 'update-job' job.id %}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">Update</a>
-                    <a href="{% url 'delete-job' job.id %}" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm" onclick="return confirm('Are you sure?')">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <!-- Update/Delete Buttons -->
+                    <td class="px-4 py-2 space-y-1">
+                        <a href="{% url 'update-job' job.id %}" class="block bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-400 text-sm text-center">Update</a>
+                        <a href="{% url 'delete-job' job.id %}" class="block bg-red-500 text-white px-3 py-1 rounded hover:bg-red-400 text-sm text-center" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-
 {% endblock %}

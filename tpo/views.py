@@ -139,6 +139,7 @@ def tpo_update_profile(request):
 
 
 def add_job(request):
+    tpo = Tpo.objects.get(id=request.session.get('tpo_id'))  # assuming session holds tpo_id
     if request.method == "POST":
         role = request.POST.get('role')
         company_name = request.POST.get('company_name')
@@ -157,12 +158,24 @@ def add_job(request):
             eligibility=eligibility,
             job_description=job_description,
             company_website=company_website,
-            job_location=job_location
+            job_location=job_location,
+            tpo=tpo  # Link the job to the logged-in tpo
         )
         messages.success(request, "Job added successfully.")
         return redirect('add-job')  # or redirect to a success page
 
     return render(request, 'add_job.html')
+
+# views.py
+from django.shortcuts import get_object_or_404, redirect
+from .models import Job
+
+def toggle_job_status(request, job_id):
+    job = get_object_or_404(Job, id=job_id)
+    job.is_active = not job.is_active
+    job.save()
+    return redirect('manage-job')  # or wherever you list jobs
+
 
 def manage_job(request):
 
@@ -171,12 +184,10 @@ def manage_job(request):
     if tpo_id is None:
         return redirect("tpo_login")  # Redirect if tpo is not logged in
 
-    # Fetch food items belonging to the logged-in tpo
-    Jobs = Job.objects.all()
+    # Fetch jobs belonging to the logged-in tpo
+    Jobs = Job.objects.all().order_by("-id")
     print("you are managing a job " ,Jobs)
 
-    # for items in food_items :  # Debugging: Check if items exist in the terminal
-    #     print(f'Name : {items}')
     return render(request, "manage_job.html", {"jobs": Jobs})
 
 def update_job(request, id):
@@ -203,15 +214,69 @@ def update_job(request, id):
     
     
 
-    
-
-
 from django.shortcuts import get_object_or_404, redirect
 def delete_job(request, job_id):
     
-    # Jobs =  get_object_or_404(Job, id=Job_id)
-    # print("you are deleting a job " ,Job_id)
-    # Jobs.delete()
+    Jobs =  get_object_or_404(Job, id=job_id)
+    print("you are deleting a job " ,job_id)
+    Jobs.delete()
     messages.success(request, "Job deleted successfully.")
     return redirect("manage-job")
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Alumni
+from django.contrib import messages
+
+def add_alumni(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        course = request.POST.get("course")
+        passing_year = request.POST.get("passing_year")
+        current_company = request.POST.get("current_company")
+        position = request.POST.get("position")
+        profile = request.FILES.get("profile_pic")
+
+        Alumni.objects.create(
+            name=name,
+            email=email,
+            course=course,
+            passing_year=passing_year,
+            current_company=current_company,
+            position=position,
+            profile_pic=profile
+        )
+        messages.success(request, "Alumni added successfully!")
+        return redirect('alumni_list')
+
+    return render(request, "add_alumni.html")
+
+
+def update_alumni(request, alumni_id):
+    alumni = get_object_or_404(Alumni, id=alumni_id)
     
+    if request.method == "POST":
+        alumni.name = request.POST.get("name")
+        alumni.email = request.POST.get("email")
+        alumni.course = request.POST.get("course")
+        alumni.passing_year = request.POST.get("passing_year")
+        alumni.current_company = request.POST.get("current_company")
+        alumni.position = request.POST.get("position")
+        alumni.save()
+        messages.success(request, "Alumni updated successfully!")
+        return redirect('alumni_list')
+
+    return render(request, "update_alumni.html", {'alumni': alumni})
+
+
+def toggle_alumni_visibility(request, alumni_id):
+    alumni = get_object_or_404(Alumni, id=alumni_id)
+    alumni.is_visible = not alumni.is_visible
+    alumni.save()
+    messages.success(request, f"Alumni visibility set to {'Visible' if alumni.is_visible else 'Hidden'}")
+    return redirect('alumni_list')
+
+
+def alumni_list(request):
+    alumni = Alumni.objects.all().order_by("-id")
+    return render(request, "alumni_list.html", {"alumni": alumni})

@@ -4,20 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}CampusHire{% endblock %}</title>
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #ffeb3b !important;
+        }
+
+        footer {
+            background: #212529;
+            color: #ddd;
+            padding: 40px 0 10px;
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            max-width: 1300px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .footer-section {
+            flex: 1 1 200px;
+            margin: 15px;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            border-bottom: 2px solid #0dcaf0;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: #0dcaf0;
+        }
+
+        .social-links a {
+            color: #ccc;
+            margin-right: 15px;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #0dcaf0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">CampusHire</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto gap-3">
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Jobs</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Companies</a></li>
@@ -29,22 +130,19 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow-1">
-        <div class="container mt-4">
+    <main class="flex-grow-1 py-4">
+        <div class="container">
             {% block content %}{% endblock %}
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white">
+    <footer>
         <div class="footer-container">
-            <!-- About Section -->
             <div class="footer-section">
                 <h4>About CampusHire</h4>
-                <p>CampusHire is a dedicated platform that bridges the gap between students and recruiters, providing seamless access to job opportunities, internships, and career guidance.</p>
+                <p>CampusHire is a dedicated platform bridging the gap between students and recruiters, providing job opportunities and career guidance.</p>
             </div>
-
-            <!-- Quick Links -->
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <ul>
@@ -56,88 +154,36 @@
                     <li><a href="/privacy">Privacy Policy</a></li>
                 </ul>
             </div>
-
-            <!-- Partner Websites -->
             <div class="footer-section">
-                <h4>Partner Websites</h4>
+                <h4>Partner Sites</h4>
                 <ul>
                     <li><a href="https://example1.com" target="_blank">Example1</a></li>
                     <li><a href="https://example2.com" target="_blank">Example2</a></li>
                     <li><a href="https://example3.com" target="_blank">Example3</a></li>
                 </ul>
             </div>
-
-            <!-- Contact Info -->
             <div class="footer-section">
                 <h4>Contact Us</h4>
-                <p>Email: <a href="mailto:support@campushire.com">support@campushire.com</a></p>
-                <p>Phone: +91 98765 43210</p>
-                <p>Address: Zeal Institute, Pune, India</p>
+                <p><i class="fa fa-envelope me-2"></i><a href="mailto:support@campushire.com">support@campushire.com</a></p>
+                <p><i class="fa fa-phone me-2"></i>+91 98765 43210</p>
+                <p><i class="fa fa-map-marker-alt me-2"></i>Zeal Institute, Pune</p>
             </div>
-
-            <!-- Social Media Links -->
             <div class="footer-section">
                 <h4>Follow Us</h4>
-                <ul class="social-links">
-                    <li><a href="https://facebook.com/campushire" target="_blank">Facebook</a></li>
-                    <li><a href="https://twitter.com/campushire" target="_blank">Twitter</a></li>
-                    <li><a href="https://linkedin.com/company/campushire" target="_blank">LinkedIn</a></li>
-                    <li><a href="https://instagram.com/campushire" target="_blank">Instagram</a></li>
-                </ul>
+                <div class="social-links">
+                    <a href="https://facebook.com/campushire" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://twitter.com/campushire" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://linkedin.com/company/campushire" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="https://instagram.com/campushire" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
         </div>
-
-        <div class="footer-bottom text-center mt-3">
+        <div class="footer-bottom">
             <p>&copy; 2025 CampusHire. All Rights Reserved.</p>
         </div>
     </footer>
 
-    <style>
-        .footer-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            max-width: 1100px;
-            margin: auto;
-            padding: 20px 0;
-        }
-        .footer-section {
-            flex: 1;
-            min-width: 200px;
-            padding: 10px;
-            text-align: left;
-        }
-        .footer-section h4 {
-            margin-bottom: 12px;
-            font-size: 18px;
-            border-bottom: 2px solid #4CAF50;
-            display: inline-block;
-            padding-bottom: 5px;
-        }
-        .footer-section ul {
-            list-style: none;
-            padding: 0;
-        }
-        .footer-section ul li {
-            margin-bottom: 8px;
-        }
-        .footer-section ul li a {
-            color: #fff;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .footer-section ul li a:hover {
-            color: #4CAF50;
-        }
-        .social-links {
-            display: flex;
-            flex-direction: column;
-        }
-        .footer-bottom {
-            border-top: 1px solid #fff;
-            padding-top: 10px;
-        }
-    </style>
-
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

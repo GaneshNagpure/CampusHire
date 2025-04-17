@@ -1,114 +1,181 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PLACEMENT{% endblock %}</title>
+
     <link rel="icon" type="image/png" href="{% static 'vendor/images/favicon.png' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-    <script src="https://unpkg.com/unlazy@0.11.3/dist/unlazy.with-hashing.iife.js" defer init></script>
-    <title>{% block title %}PLACEMENT{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Make the sidebar width responsive */
+        #sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        #sidebar.active {
+            transform: translateX(0);
+        }
         @media (max-width: 768px) {
             #sidebar {
-                display: none;
+                transform: translateX(-100%);
             }
-
-            #sidebar.active {
-                display: block;
-            }
+        }
+        .sidebar-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        button:focus {
+            outline: none;
+        }
+        .message {
+            transition: opacity 1s ease-out;
         }
     </style>
 </head>
-<body>
+<body class="bg-zinc-100">
     <div class="flex">
+       
         <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-zinc-800 text-white h-screen sticky top-0">
+        <aside id="sidebar" class="w-64 bg-zinc-800 text-white h-screen sticky top-0 z-40 transform -translate-x-full lg:translate-x-0">
             <div class="p-4">
-                {% if messages %}
-                <div id="message-box" class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md">
-                    {% for message in messages %}
-                    <div class="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded relative shadow-md transition-opacity duration-1000 ease-in-out">
-                        <span class="block sm:inline">{{ message }}</span>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <script>
-                    setTimeout(function () {
-                        const box = document.getElementById("message-box");
-                        if (box) {
-                            box.style.opacity = 0;
-                            setTimeout(() => {
-                                box.style.display = "none";
-                            }, 1000);
-                        }
-                    }, 2000);
-                </script>
-                {% endif %}
-                
-                <div class="container mt-5">
-                    <h2>Welcome</h2>
-                    <h2> {{ tpo.full_name }}</h2>
-                </div>
+                <h2 class="text-lg font-semibold">Welcome</h2>
+                <p>{{ tpo.full_name }}</p>
             </div>
-            <nav class="mt-4">
+            <nav>
                 <ul>
-                    <li class="py-2 px-4 hover:bg-zinc-700">
-                        <a href="{% url 'tpo_dashboard' %}">Dashboard</a>
+                    <li>
+                        <a href="{% url 'tpo_dashboard' %}" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-tachometer-alt sidebar-icon"></i> Dashboard
+                        </a>
                     </li>
-                    <li class="py-2 px-4 hover:bg-zinc-700">
-                        <a href="{% url 'add-job' %}">Add Job</a>
-                    </li>
-                  
-                    <!-- Parent List Item (Dropdown) -->
-                    <li class="relative group py-2 px-4 hover:bg-zinc-700">
-                        <h1>Job</h1>
-                        <!-- Dropdown Menu -->
-                        <ul class="absolute left-20 hidden group-hover:block bg-zinc-800 w-40 shadow-md">
-                            <li class="py-2 px-4 hover:bg-zinc-700">
-                                <a href="{% url 'add-job' %}">Add Job</a>
+
+                    <!-- Job Dropdown -->
+                    <li class="relative">
+                        <button onclick="toggleDropdown('jobDropdown')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-700">
+                            <span><i class="fas fa-briefcase sidebar-icon"></i> Job</span>
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <ul id="jobDropdown" class="hidden bg-zinc-900 z-50">
+                            <li>
+                                <a href="{% url 'add-job' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #374151;">
+                                    <i class="fas fa-plus-circle sidebar-icon"></i> Add Job
+                                </a>
                             </li>
-                            <li class="py-2 px-4 hover:bg-zinc-700">
-                                <a href="{% url 'manage-job' %}">View Jobs</a>
+                            <li>
+                                <a href="{% url 'manage-job' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #4B5563;">
+                                    <i class="fas fa-list sidebar-icon"></i> Manage Job
+                                </a>
                             </li>
                         </ul>
                     </li>
-                   
-                    <li class="py-2 px-4 hover:bg-zinc-700"><a href="{% url 'tpo_account' %}">My Account</a></li>
-                    <li class="py-2 px-4 hover:bg-zinc-700"><a href="{% url 'tpo_logout' %}">Logout</a></li>
+
+                    <!-- Alumni Dropdown -->
+                    <li class="relative">
+                        <button onclick="toggleDropdown('alumniDropdown')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-700">
+                            <span><i class="fas fa-users sidebar-icon"></i> Alumni</span>
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <ul id="alumniDropdown" class="hidden bg-zinc-900 z-50">
+                            <li>
+                                <a href="{% url 'add_alumni'%}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #374151;">
+                                    <i class="fas fa-user-friends sidebar-icon"></i> Add Alumni
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'alumni_list'%}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #4B5563;">
+                                    <i class="fas fa-tachometer-alt sidebar-icon"></i> View Alumni
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-chart-bar sidebar-icon"></i> Statistics
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-question-circle sidebar-icon"></i> FAQ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-bullhorn sidebar-icon"></i> Drives
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'tpo_account' %}" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-user-circle sidebar-icon"></i> My Account
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'tpo_logout' %}" class="flex items-center px-6 py-3 hover:bg-zinc-700">
+                            <i class="fas fa-sign-out-alt sidebar-icon"></i> Logout
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
 
-        <!-- Main Content Area -->
-        <main class="flex-1 bg-zinc-100 p-6" style="background-color: rgb(239, 235, 233)">
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="p-4 rounded-lg mb-3 text-white message 
+                            {% if message.tags == 'error' %} bg-red-500 
+                            {% elif message.tags == 'success' %} bg-green-500 
+                            {% elif message.tags == 'warning' %} bg-yellow-500 
+                            {% else %} bg-blue-500 
+                            {% endif %}" id="message-{{ forloop.counter }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% block content %}
-            <!-- Content will be injected here -->
+            <!-- Content goes here -->
             {% endblock %}
         </main>
     </div>
 
-    <!-- Mobile Navbar Toggle Button -->
-    <button id="sidebar-toggle" class="fixed top-4 left-4 z-50 p-3 bg-white text-zinc-800 rounded-md lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" class="h-6 w-6" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 12h18M3 6h18M3 18h18"></path>
+    <!-- Toggle button for mobile -->
+    <button id="sidebar-toggle" class="fixed top-4 left-4 z-50 p-3 bg-white text-zinc-800 rounded-md shadow lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6h18M3 12h18M3 18h18" />
         </svg>
     </button>
 
+    <!-- Scripts -->
     <script>
-        // Sidebar toggle functionality for mobile screens
         const sidebar = document.getElementById('sidebar');
-        const toggleButton = document.getElementById('sidebar-toggle');
-
-        toggleButton.addEventListener('click', function () {
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
+
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Hide messages after a delay
+        window.onload = function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach((message, index) => {
+                setTimeout(() => {
+                    message.style.opacity = 0;
+                    setTimeout(() => {
+                        message.remove();
+                    }, 1000); // remove after fade out
+                }, 5000 * (index + 1)); // delay each message by 5 seconds
+            });
+        };
     </script>
 </body>
 </html>
-

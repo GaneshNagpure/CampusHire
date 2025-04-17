@@ -14,7 +14,8 @@ from django.contrib.auth.decorators import login_required  # For requiring login
 
 # Create your views here.
 def home(request):
-    return render(request, 'home.html')
+    active_jobs = Job.objects.filter(is_active=True).order_by('-id')[:20]  # Latest 6 jobs
+    return render(request, 'home.html', {'active_jobs': active_jobs})
 
 def terms(request):
     return render(request, 'termsandconditions.html')
@@ -127,6 +128,39 @@ def login(request):
 from .models import User, Profile, Education, Experience, ProfileSkillsCertifications
 
 
+# def dashboard(request):
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+    
+#     user_id = request.session['user_id']
+#     user = User.objects.get(id=user_id)
+
+#     # ✅ Ensure profile exists
+#     profile, created = Profile.objects.get_or_create(user=user)
+#     print("Profile Image URL:", profile.profile_pic.url if profile.profile_pic else "No Image Found")
+
+
+#     # ✅ Ensure ProfileSkillsCertifications exists
+#     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+#     certifications = skillscertifications.certifications.all()
+
+
+#     messages.success(request, f"Welcome back, {user.name}!")
+
+#     return render(request, 'dashboard.html', {
+#         'user': user,
+#         'profile': profile,
+#         'skillscertifications': skillscertifications,
+#         'certifications': certifications,
+#        })
+
+from tpo.models import Job  # adjust this import based on your app name
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import User, Profile, ProfileSkillsCertifications
+from tpo.models import Job  # Make sure this import exists
+
 def dashboard(request):
     if 'user_id' not in request.session:
         return redirect('login')
@@ -134,15 +168,15 @@ def dashboard(request):
     user_id = request.session['user_id']
     user = User.objects.get(id=user_id)
 
-    # ✅ Ensure profile exists
+    # Ensure profile exists
     profile, created = Profile.objects.get_or_create(user=user)
-    print("Profile Image URL:", profile.profile_pic.url if profile.profile_pic else "No Image Found")
 
-
-    # ✅ Ensure ProfileSkillsCertifications exists
+    # Ensure skills/certs exist
     skillscertifications, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
     certifications = skillscertifications.certifications.all()
 
+    # ✅ Fetch only active jobs
+    recommended_jobs = Job.objects.filter(is_active=True).order_by('-id')
 
     messages.success(request, f"Welcome back, {user.name}!")
 
@@ -151,7 +185,10 @@ def dashboard(request):
         'profile': profile,
         'skillscertifications': skillscertifications,
         'certifications': certifications,
-       })
+        'recommended_jobs': recommended_jobs,
+    })
+
+
 
 
 def logout(request):
@@ -811,3 +848,13 @@ def reset_password(request):
                 messages.error(request, "User not found.")
 
     return render(request, 'auth/reset_password.html')
+
+from django.shortcuts import render
+from tpo.models import Alumni
+
+def alumni_list_student(request):
+    alumni = Alumni.objects.filter(is_visible=True)
+
+     # Assuming you have a user session
+    return render(request, 'alumni1_list.html', {'alumni': alumni, 'profile': profile})
+

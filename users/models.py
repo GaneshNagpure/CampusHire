@@ -118,3 +118,17 @@ class PasswordResetOTP(models.Model):
 
     def is_expired(self):
         return timezone.now() > self.created_at + timedelta(minutes=10)
+
+from django.db import models
+from django.conf import settings
+from tpo.models import Job  # update this import as needed
+
+class JobApplication(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)  # Correct field name might be 'student', not 'user'
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    applied_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ('job', 'student')  # Prevent duplicate applications
+
+    def __str__(self):
+        return f"{self.student} applied to {self.job}"

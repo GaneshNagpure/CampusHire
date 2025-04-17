@@ -1,75 +1,147 @@
 {% extends "base/base.html" %}
 {% block title %}Home Page{% endblock %}
 {% block content %}
+<style>
+    .hero-section {
+        background: linear-gradient(120deg, #e0f2f1, #e1f5fe);
+    }
+    .card:hover {
+        transform: translateY(-8px);
+        transition: all 0.3s ease;
+    }
+    .search-box:focus {
+        border-color: #00acc1;
+        box-shadow: 0 0 0 0.2rem rgba(0, 172, 193, 0.25);
+    }
+    .btn-custom {
+        background-color: #00acc1;
+        color: white;
+        transition: all 0.3s ease-in-out;
+    }
+    .btn-custom:hover {
+        background-color: #008b94;
+        transform: scale(1.05);
+    }
+    .suggestions {
+        position: absolute;
+        background: #ffffff;
+        border: 1px solid #ddd;
+        width: 50%;
+        max-height: 150px;
+        overflow-y: auto;
+        z-index: 10;
+        border-radius: 0 0 15px 15px;
+        display: none;
+    }
+    .suggestions div {
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+    .suggestions div:hover {
+        background-color: #f1f1f1;
+    }
+</style>
+
 <div class="container mt-5">
     <!-- Hero Section -->
-    <div class="text-center bg-primary text-white p-5 rounded shadow-lg">
-        <h1 class="display-4 fw-bold">Welcome to "CampusHire" the Zeal Job Portal</h1>
-        <p class="lead">Find the perfect job or internship that suits your skills.</p>
-        <form class="d-flex justify-content-center">
-            <input class="form-control w-50 rounded-pill shadow-sm" type="search" placeholder="Search for jobs...">
-            <button class="btn btn-light ms-2 rounded-pill shadow-sm">Search</button>
-        </form>
+    <div class="text-center hero-section text-dark p-5 rounded shadow-sm" data-aos="fade-down">
+        <h1 class="display-5 fw-semibold mb-3">Welcome to <span class="text-primary">CampusHire</span></h1>
+        <p class="lead mb-4">Discover top opportunities and launch your career journey with Zeal’s official job portal.</p>
+        <div class="position-relative d-flex justify-content-center">
+            <input id="search-input" class="form-control w-50 rounded-pill shadow-sm search-box" type="search" placeholder="Search for jobs...">
+            <button class="btn btn-custom ms-2 rounded-pill shadow-sm px-4">Search</button>
+            <div id="suggestions-box" class="suggestions"></div>
+        </div>
     </div>
 
     <!-- Featured Jobs Section -->
-    <div class="mt-5">
-        <h2 class="text-center fw-bold">Latest Job Openings</h2>
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="card p-3 shadow-lg border-0">
-                    <h5 class="fw-bold">Software Developer</h5>
-                    <p class="text-muted">ABC Tech - Pune</p>
-                    <a href="#" class="btn btn-primary w-100">Apply Now</a>
+    <div class="mt-5" data-aos="fade-up">
+        <h2 class="text-center fw-bold mb-4">Latest Job Openings</h2>
+        <div class="row g-4">
+            {% for job in active_jobs %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'1' }}00">
+                <div class="card p-4 shadow-sm border-0 h-100">
+                    <h5 class="fw-bold mb-1">{{ job.role }}</h5>
+                    <p class="text-muted mb-3">{{ job.company }} – {{ job.job_location|default:"Remote" }}</p>
+                    {% if request.session.user_id %}
+                        <a href="" class="btn btn-outline-primary w-100 rounded-pill fw-semibold">Apply Now</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary w-100 rounded-pill fw-semibold">Login to Apply</a>
+                    {% endif %}
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card p-3 shadow-lg border-0">
-                    <h5 class="fw-bold">Data Analyst</h5>
-                    <p class="text-muted">XYZ Analytics - Pune</p>
-                    <a href="#" class="btn btn-primary w-100">Apply Now</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 shadow-lg border-0">
-                    <h5 class="fw-bold">Marketing Intern</h5>
-                    <p class="text-muted">Startup Hub - Pune</p>
-                    <a href="#" class="btn btn-primary w-100">Apply Now</a>
-                </div>
-            </div>
+            {% empty %}
+            <p class="text-center">No jobs available at the moment.</p>
+            {% endfor %}
         </div>
+        
     </div>
 
     <!-- How It Works Section -->
     <div class="mt-5 text-center">
-        <h2 class="fw-bold">How It Works?</h2>
-        <div class="row mt-4">
-            <div class="col-md-4">
-                <div class="p-3 bg-light shadow rounded">
+        <h2 class="fw-bold mb-4" data-aos="zoom-in">How It Works</h2>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="flip-left">
+                <div class="p-4 bg-white border shadow-sm rounded h-100">
                     <h4 class="fw-bold">1. Register</h4>
-                    <p class="text-muted">Create an account and set up your profile.</p>
+                    <p class="text-muted">Create your account and complete your profile.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="p-3 bg-light shadow rounded">
+            <div class="col-md-4" data-aos="flip-up">
+                <div class="p-4 bg-white border shadow-sm rounded h-100">
                     <h4 class="fw-bold">2. Apply</h4>
-                    <p class="text-muted">Browse job listings and apply with one click.</p>
+                    <p class="text-muted">Explore and apply to jobs or internships instantly.</p>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="p-3 bg-light shadow rounded">
+            <div class="col-md-4" data-aos="flip-right">
+                <div class="p-4 bg-white border shadow-sm rounded h-100">
                     <h4 class="fw-bold">3. Get Hired</h4>
-                    <p class="text-muted">Attend interviews and secure your dream job.</p>
+                    <p class="text-muted">Crack the interviews and land your dream role.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Call-to-Action Section -->
-    <div class="text-center bg-secondary text-white p-4 mt-5 rounded shadow-lg">
-        <h3 class="fw-bold">Start Your Career Journey Today</h3>
-        <a href="{% url 'register' %}" class="btn btn-light text-dark fw-bold px-4 py-2 rounded-pill shadow-sm">Sign Up Now</a>
+    <div class="text-center bg-light p-5 mt-5 rounded shadow-sm border" data-aos="fade-up">
+        <h3 class="fw-bold mb-3">Ready to Start Your Career Journey?</h3>
+        <a href="{% url 'register' %}" class="btn btn-custom fw-bold px-4 py-2 rounded-pill shadow-sm">Sign Up Now</a>
     </div>
 </div>
-<div> <br> </div>
+<div><br></div>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const suggestionsBox = document.getElementById('suggestions-box');
+
+    const jobSuggestions = [
+        "Software Developer",
+        "Data Analyst",
+        "Marketing Intern",
+        "UI/UX Designer",
+        "Network Engineer",
+        "Java Developer",
+        "Python Intern"
+    ];
+
+    searchInput.addEventListener('input', () => {
+        const input = searchInput.value.toLowerCase();
+        suggestionsBox.innerHTML = "";
+        if (input) {
+            const filtered = jobSuggestions.filter(job => job.toLowerCase().includes(input));
+            filtered.forEach(job => {
+                const div = document.createElement('div');
+                div.textContent = job;
+                div.onclick = () => {
+                    searchInput.value = job;
+                    suggestionsBox.style.display = 'none';
+                };
+                suggestionsBox.appendChild(div);
+            });
+            suggestionsBox.style.display = filtered.length ? 'block' : 'none';
+        } else {
+            suggestionsBox.style.display = 'none';
+        }
+    });
+</script>
 {% endblock %}

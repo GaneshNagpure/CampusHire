@@ -9,13 +9,7 @@
   <form method="POST" class="mx-auto" style="max-width: 600px;">
     {% csrf_token %}
     
-    {% if messages %}
-    <div id="message-box">
-      {% for message in messages %}
-        <div class="alert alert-success">{{ message }}</div>
-      {% endfor %}
-    </div>
-
+    
     <script>
       setTimeout(function() {
         document.getElementById("message-box").style.display = "none";

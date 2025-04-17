@@ -4,57 +4,65 @@
 
 {% block content %}
 
-    <div class="container">
-        <h2 class="mb-4">Add New Job</h2>
-        <form method="POST">
-            {% csrf_token %}
-            {% if messages %}
-        <div id="message-box">
-          {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
-          {% endfor %}
-        </div>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-3xl font-semibold">Add New Job</h2>
+
+    <form method="POST" class="shadow-lg p-6 rounded-lg bg-white" style="border: 1px solid #ddd;">
+        {% csrf_token %}
+        
+        
 
         <script>
-          setTimeout(function() {
-            document.getElementById("message-box").style.display = "none";
-          }, 3000); // Hide message after 3 seconds
+            setTimeout(function() {
+                document.getElementById("message-box").style.display = "none";
+            }, 3000); // Hide message after 3 seconds
         </script>
-      {% endif %}
-            <div class="mb-3">
-                <label>Company Name</label>
-                <input type="text" name="company_name" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Job Role</label>
-                <input type="text" name="role" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Salary Package</label>
-                <input type="number" step="0.01" name="salary" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Last Date to Apply</label>
-                <input type="date" name="last_date_to_apply" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Eligibility Criteria</label>
-                <textarea name="eligibility" class="form-control" required></textarea>
-            </div>
-            <div class="mb-3">
-                <label>Company Website</label>
-                <input type="text" name="company_website" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Company Location</label>
-                <input type="text" name="job_location" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label>Job Description</label>
-                <textarea name="job_description" class="form-control" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-success">Add Job</button>
-        </form>
-    </div>
+       
+
+        <div class="mb-3">
+            <label for="company_name" class="form-label">Company Name</label>
+            <input type="text" id="company_name" name="company_name" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="role" class="form-label">Job Role</label>
+            <input type="text" id="role" name="role" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="salary" class="form-label">Salary Package (in INR)</label>
+            <input type="number" step="0.01" id="salary" name="salary" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="last_date_to_apply" class="form-label">Last Date to Apply</label>
+            <input type="date" id="last_date_to_apply" name="last_date_to_apply" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="eligibility" class="form-label">Eligibility Criteria</label>
+            <textarea id="eligibility" name="eligibility" class="form-control shadow-sm" rows="4" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="company_website" class="form-label">Company Website</label>
+            <input type="text" id="company_website" name="company_website" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="job_location" class="form-label">Company Location</label>
+            <input type="text" id="job_location" name="job_location" class="form-control shadow-sm" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="job_description" class="form-label">Job Description</label>
+            <textarea id="job_description" name="job_description" class="form-control shadow-sm" rows="4" required></textarea>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-5 py-2 shadow-lg hover:bg-green-700 transition-all ease-in-out duration-200">Add Job</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

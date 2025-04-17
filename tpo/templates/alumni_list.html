@@ -1,0 +1,50 @@
+{% extends 'base1.html' %}
+{% block content %}
+<div class="w-full max-w-6xl mx-auto p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold">Alumni List</h2>
+        <a href="{% url 'add_alumni' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow text-sm">+ Add New</a>
+    </div>
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-4 py-2 min-w-[120px]">Name</th>
+                    <th class="px-4 py-2 min-w-[200px]">Email</th>
+                    <th class="px-4 py-2">Course</th>
+                    <th class="px-4 py-2">Year</th>
+                    <th class="px-4 py-2">Company</th>
+                    <th class="px-4 py-2">Position</th>
+                    <th class="px-4 py-2">Status</th>
+                    <th class="px-4 py-2 min-w-[150px]">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for alumni in alumni %}
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="px-4 py-2">{{ alumni.name }}</td>
+                    <td class="px-4 py-2">{{ alumni.email }}</td>
+                    <td class="px-4 py-2">{{ alumni.course }}</td>
+                    <td class="px-4 py-2">{{ alumni.passing_year }}</td>
+                    <td class="px-4 py-2">{{ alumni.current_company }}</td>
+                    <td class="px-4 py-2">{{ alumni.position }}</td>
+                    <td class="px-4 py-2">
+                        {% if alumni.is_visible %}
+                            <span class="text-green-600 font-semibold">Visible</span>
+                        {% else %}
+                            <span class="text-gray-500">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-4 py-2 space-y-1">
+                        <a href="{% url 'update_alumni' alumni.id %}" class="block bg-yellow-500 text-white px-3 py-1 rounded text-sm text-center">Edit</a>
+                        <a href="{% url 'toggle_alumni' alumni.id %}" class="block border border-gray-400 text-gray-700 px-3 py-1 rounded text-sm text-center hover:bg-gray-100">
+                            {% if alumni.is_visible %}Hide{% else %}Show{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

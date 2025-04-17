@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from .views import alumni_list_student
+
 
 
 urlpatterns = [
@@ -24,9 +26,12 @@ urlpatterns = [
     
     # urls.py
 
-path('forgot-password/', views.forgot_password, name='forgot_password'),
-path('verify-otp/', views.verify_otp, name='verify_otp'),
-path('reset-password/', views.reset_password, name='reset_password'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('reset-password/', views.reset_password, name='reset_password'),
+    path('alumni/', alumni_list_student, name='student_alumni'),
+    # path('apply/<int:job_id>/', views.apply_to_job, name='apply_to_job'),
+
 
 
 

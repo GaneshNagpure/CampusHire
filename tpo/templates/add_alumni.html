@@ -1,0 +1,17 @@
+{% extends 'base1.html' %}
+{% block content %}
+<div class="container">
+    <h2>Add Alumni</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input class="form-control my-2" type="text" name="name" placeholder="Full Name" required>
+        <input class="form-control my-2" type="email" name="email" placeholder="Email" required>
+        <input class="form-control my-2" type="text" name="course" placeholder="Course" required>
+        <input class="form-control my-2" type="number" name="passing_year" placeholder="Passing Year" required>
+        <input class="form-control my-2" type="text" name="current_company" placeholder="Current Company" required>
+        <input class="form-control my-2" type="text" name="position" placeholder="Position" required>
+        <input class="form-control my-2" type="file" name="profile_pic" placeholder="Upload Profile pic" required>
+        <button type="submit" class="btn btn-success mt-3">Add Alumni</button>
+    </form>
+</div>
+{% endblock %}

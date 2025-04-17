@@ -75,23 +75,29 @@
             </div>
 
             <!-- Recommended Jobs Section -->
-            <div class="card mb-4">
-                <div class="card-header bg-dark text-white">
-                    <h4>Recommended Jobs for You</h4>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item">
-                            <strong>Backend Developer</strong> at <em>Amazon</em>
-                            <a href="#" class="btn btn-sm btn-outline-success float-end">Apply</a>
-                        </li>
-                        <li class="list-group-item">
-                            <strong>Data Scientist</strong> at <em>Facebook</em>
-                            <a href="#" class="btn btn-sm btn-outline-success float-end">Apply</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h4>Recommended Jobs for You</h4>
+    </div>
+    <div class="card-body">
+        {% if recommended_jobs %}
+            <ul class="list-group">
+                {% for job in recommended_jobs %}
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>{{ job.role }}</strong> at <em>{{ job.company }}</em><br>
+                        <small class="text-muted">Location: {{ job.job_location }} | Salary: ₹{{ job.salary_package }}</small><br>
+                        <small class="text-muted">Apply before: {{ job.last_date_to_apply }}</small>
+                    </div>
+                    <a href="" class="btn btn-sm btn-outline-success mt-2">Apply</a>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No recommended jobs available right now.</p>
+        {% endif %}
+    </div>
+</div>
         </div>
     </div>
 
