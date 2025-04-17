@@ -1,0 +1,27 @@
+{% extends "base/dashboardbase.html" %}
+{% block title %}Confirm Apply{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h3>Confirm Application</h3>
+        </div>
+        <div class="card-body">
+            <h4>{{ job.role }} at {{ job.company }}</h4>
+            <p><strong>Location:</strong> {{ job.job_location }}</p>
+            <p><strong>Salary:</strong> ₹{{ job.salary_package }}</p>
+            <p><strong>Eligibility:</strong> {{ job.eligibility }}</p>
+            <p><strong>Website:</strong> <a href="{{ job.company_website }}" target="_blank">{{ job.company_website }}</a></p>
+            <p><strong>Deadline:</strong> {{ job.last_date_to_apply }}</p>
+            <p><strong>Description:</strong><br>{{ job.description|linebreaks }}</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Confirm Apply</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -934,10 +934,35 @@ def alumni_list_student(request):
 
 
 
-from .models import JobApplication
-from django.utils import timezone
+# from .models import JobApplication
+# from django.utils import timezone
 
-def apply_for_job(request, job_id):
+# def apply_for_job(request, job_id):
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+
+#     user = get_object_or_404(User, id=request.session['user_id'])
+#     job = get_object_or_404(Job, id=job_id)
+
+#     # Check if already applied
+#     if JobApplication.objects.filter(student=user, job=job).exists():
+#         messages.warning(request, "You have already applied for this job.")
+#     else:
+#         JobApplication.objects.create(student=user, job=job, applied_at=timezone.now())
+#         messages.success(request, f"You successfully applied to {job.role} at {job.company}.")
+
+#     return redirect('dashboard')
+
+# from django.shortcuts import render, redirect
+# from .models import JobApplication
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from tpo.models import Job
+from .models import JobApplication, User
+
+def apply_job(request, job_id):
     if 'user_id' not in request.session:
         return redirect('login')
 
@@ -946,15 +971,19 @@ def apply_for_job(request, job_id):
 
     # Check if already applied
     if JobApplication.objects.filter(student=user, job=job).exists():
-        messages.warning(request, "You have already applied for this job.")
-    else:
-        JobApplication.objects.create(student=user, job=job, applied_at=timezone.now())
-        messages.success(request, f"You successfully applied to {job.role} at {job.company}.")
+        messages.info(request, "You have already applied for this job.")
+        return redirect('dashboard')
 
-    return redirect('dashboard')
+    if request.method == "POST":
+        JobApplication.objects.create(student=user, job=job)
+        messages.success(request, f"You successfully applied for {job.role} at {job.company}")
+        return redirect('dashboard')
 
-from django.shortcuts import render, redirect
-from .models import JobApplication
+    return render(request, 'confirm_apply.html', {
+        'job': job
+    })
+
+
 
 def my_applications(request):
     if 'user_id' not in request.session:
@@ -969,3 +998,4 @@ def my_applications(request):
         'user': user,
         'applications': applications,
     })
+

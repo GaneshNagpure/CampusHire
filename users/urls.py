@@ -30,7 +30,8 @@ urlpatterns = [
     path('verify-otp/', views.verify_otp, name='verify_otp'),
     path('reset-password/', views.reset_password, name='reset_password'),
     path('alumni/', alumni_list_student, name='student_alumni'),
-    path('apply/<int:job_id>/', views.apply_for_job, name='apply_for_job'),
+    path('apply-job/<int:job_id>/', views.apply_job, name='apply_job'),
+
     path('my-applications/', views.my_applications, name='my_applications'),
 
 

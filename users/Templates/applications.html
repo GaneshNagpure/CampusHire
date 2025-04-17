@@ -8,24 +8,28 @@
     {% if applications %}
         <div class="row">
             {% for application in applications %}
-            <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ application.job.role }}</h5>
-                        <h6 class="card-subtitle text-muted">{{ application.job.company }}</h6>
-                        <p class="card-text">
-                            <strong>Location:</strong> {{ application.job.job_location }}<br>
-                            <strong>Salary:</strong> ₹{{ application.job.salary_package }}<br>
-                            <strong>Applied On:</strong> {{ application.applied_at|date:"d M, Y H:i" }}
-                        </p>
-                        <a href="#" class="btn btn-outline-info btn-sm">View Details</a>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm border-light rounded">
+                        <div class="card-body">
+                            <h5 class="card-title font-weight-bold">{{ application.job.role }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ application.job.company }}</h6>
+                            <p class="card-text"><strong>Applied On:</strong> {{ application.applied_at|date:"d M, Y" }}</p>
+                            <hr>
+                            <p><strong>Location:</strong> {{ application.job.job_location }}</p>
+                            <p><strong>Salary Package:</strong> ₹{{ application.job.salary_package }}</p>
+                            <p><strong>Eligibility:</strong> {{ application.job.eligibility }}</p>
+                            <p><strong>Job Description:</strong> {{ application.job.job_description|truncatewords:15 }}</p>
+                            <p><strong>Website:</strong> <a href="{{ application.job.company_website }}" class="text-primary" target="_blank">{{ application.job.company_website }}</a></p>
+                            
+                        </div>
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>You have not applied to any jobs yet.</p>
+        <div class="alert alert-warning" role="alert">
+            You have not applied to any jobs yet.
+        </div>
     {% endif %}
 </div>
 {% endblock %}
