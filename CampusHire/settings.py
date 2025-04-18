@@ -188,6 +188,4 @@ STATIC_URL = '/static/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Heroku Postgres DB
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['GaneshNagpure.pythonanywhere.com']
