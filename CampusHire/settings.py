@@ -25,7 +25,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # This ensures the session ends when the
 SECRET_KEY = 'django-insecure-&re-58v0)p_3r38idi=&mjs48@4l_(m*-+8m6njpw4gr^ojc0b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -51,7 +51,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -186,6 +185,5 @@ import dj_database_url
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ALLOWED_HOSTS = ['GaneshNagpure.pythonanywhere.com']
