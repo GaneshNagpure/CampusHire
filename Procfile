@@ -1,0 +1,1 @@
+web: gunicorn campushire.wsgi 
