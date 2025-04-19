@@ -1,0 +1,58 @@
+{% extends 'base1.html' %}
+{% block content %}
+<div class="w-full p-6">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold">Job Applications</h2>
+    </div>
+    <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="min-w-full text-sm text-left text-gray-700">
+            <thead class="bg-gray-800 text-white">
+                <tr>
+                    <th class="px-6 py-3">Student Name</th>
+                    <th class="px-6 py-3">Job Title</th>
+                    <th class="px-6 py-3">Current Status</th>
+                    <th class="px-6 py-3">Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr class="border-b hover:bg-gray-100">
+                    <td class="px-6 py-3">{{ application.student.name }}</td>
+                    <td class="px-6 py-3">{{ application.job }}</td>
+                    <td class="px-6 py-3 font-semibold">
+                        {% if application.status == 'applied' %}
+                            <span class="text-blue-600">Applied</span>
+                        {% elif application.status == 'shortlisted' %}
+                            <span class="text-yellow-600">Shortlisted</span>
+                        {% elif application.status == 'interviewing' %}
+                            <span class="text-purple-600">Interview</span>
+                        {% elif application.status == 'placed' %}
+                            <span class="text-green-600">Placed</span>
+                        {% elif application.status == 'rejected' %}
+                            <span class="text-red-600">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-3">
+                        <form action="{% url 'update_application_status' application.id %}" method="POST" class="flex items-center gap-2">
+                            {% csrf_token %}
+                            <select name="status" class="border rounded px-4 py-1 text-sm">
+                                {% for choice in status_choices %}
+                                    <option value="{{ choice.0 }}" {% if choice.0 == application.status %}selected{% endif %}>
+                                        {{ choice.1 }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center px-6 py-6 text-gray-500">No job applications found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

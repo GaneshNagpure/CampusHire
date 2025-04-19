@@ -123,9 +123,17 @@ from django.db import models
 from django.conf import settings
 from tpo.models import Job  # update this import as needed
 
+APPLICATION_STATUS_CHOICES = [
+    ('applied', 'Applied'),
+    ('shortlisted', 'Shortlisted'),
+    ('interviewing', 'Interviewing'),
+    ('placed', 'Placed'),
+    ('rejected', 'Rejected'),
+]
 class JobApplication(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)  # Correct field name might be 'student', not 'user'
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=APPLICATION_STATUS_CHOICES, default='applied')
     applied_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         unique_together = ('job', 'student')  # Prevent duplicate applications

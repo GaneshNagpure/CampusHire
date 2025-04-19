@@ -1,15 +1,147 @@
 {% extends 'base1.html' %}
 
 {% block title %}Dashboard - ZEAL PLACEMENT{% endblock %}
+{% load custom_filters %}
 
 {% block content %}
-
-<div class="container">
+<div class="container mt-5">
+    <!-- Dashboard Header -->
     <div class="row">
         <div class="col-md-12">
-            <h1>Dashboard</h1>
-            
+            <h1 class="text-center fw-bold">Welcome to CampusHire - The ZEAL PLACEMENT</h1>
+            <h2 class="text-center fw-bold">TPO Dashboard</h2>
+            <p class="text-center">Manage your job postings and applications efficiently.</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="fw-bold">Dashboard</h1>
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Total Jobs</h4>
+                    <p class="card-text fs-5">{{ total_jobs }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Total Applications</h4>
+                    <p class="card-text fs-5">{{ total_applications }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Total Candidates</h4>
+                    <p class="card-text fs-5">{{ total_candidates }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Shortlisted Candidates</h4>
+                    <p class="card-text fs-5">{{ shortlisted }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Job Statuses Stats -->
+    <div class="row mb-5">
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Ongoing Interviews</h4>
+                    <p class="card-text fs-5">{{ ongoing_interviews }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Placed</h4>
+                    <p class="card-text fs-5">{{ placed }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold">Rejected</h4>
+                    <p class="card-text fs-5">{{ rejected }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <form method="GET" action="{% url 'export_to_excel' %}" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label for="from_date" class="form-label fw-bold">From Date</label>
+            <input type="date" id="from_date" name="from_date" class="form-control" required>
+        </div>
+        <div class="col-md-3">
+            <label for="to_date" class="form-label fw-bold">To Date</label>
+            <input type="date" id="to_date" name="to_date" class="form-control" required>
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-dark">Export to Excel</button>
+        </div>
+    </form>
+    
+    <!-- Job Listings Table -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="fw-bold mb-3">Job Listings</h3>
+            <div class="table-responsive shadow-sm">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Job Title</th>
+                            <th>Company</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Total Applicants</th>
+                            <th>Shortlisted</th>
+                            <th>Interviewing</th>
+                            <th>Placed</th>
+                            <th>Rejected</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in job_details %}
+                            {% with job_application_counts|get_item:job.id as counts %}
+                            <tr>
+                                <td>{{ job.role }}</td>
+                                <td>{{ job.company }}</td>
+                                <td>{{ job.job_location }}</td>
+                                <td>{{ job.is_active|yesno:"Active,Inactive" }}</td>
+                                <td>{{ counts.total|default:"0" }}</td>
+                                <td>{{ counts.shortlisted|default:"0" }}</td>
+                                <td>{{ counts.interviewing|default:"0" }}</td>
+                                <td>{{ counts.placed|default:"0" }}</td>
+                                <td>{{ counts.rejected|default:"0" }}</td>
+                            </tr>
+                            {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
-

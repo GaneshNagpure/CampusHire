@@ -2,33 +2,64 @@
 {% block title %}My Applications{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4">My Job Applications</h2>
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold text-center text-primary">My Job Applications</h2>
 
     {% if applications %}
         <div class="row">
             {% for application in applications %}
                 <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card shadow-sm border-light rounded">
-                        <div class="card-body">
-                            <h5 class="card-title font-weight-bold">{{ application.job.role }}</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ application.job.company }}</h6>
-                            <p class="card-text"><strong>Applied On:</strong> {{ application.applied_at|date:"d M, Y" }}</p>
+                    <div class="card shadow-sm border-0 rounded-3 h-100">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title text-dark fw-semibold">{{ application.job.role }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">{{ application.job.company }}</h6>
+                                <p class="mb-1"><strong>Applied On:</strong> {{ application.applied_at|date:"d M, Y" }}</p>
+
+                                <!-- DEBUG (Optional) -->
+                                {# <p class="text-muted"><strong>DEBUG Status:</strong> {{ application.status }}</p> #}
+
+                                <!-- Status Display -->
+                                <span class="badge 
+                                    {% if application.status == 'applied' %}
+                                        bg-primary
+                                    {% elif application.status == 'shortlisted' %}
+                                        bg-warning text-dark
+                                    {% elif application.status == 'interview' %}
+                                        bg-purple text-white
+                                    {% elif application.status == 'placed' %}
+                                        bg-success
+                                    {% elif application.status == 'rejected' %}
+                                        bg-danger
+                                    {% else %}
+                                        bg-secondary
+                                    {% endif %}
+                                ">
+                                    {{ application.get_status_display }}
+                                </span>
+                            </div>
+
                             <hr>
-                            <p><strong>Location:</strong> {{ application.job.job_location }}</p>
-                            <p><strong>Salary Package:</strong> ₹{{ application.job.salary_package }}</p>
-                            <p><strong>Eligibility:</strong> {{ application.job.eligibility }}</p>
-                            <p><strong>Job Description:</strong> {{ application.job.job_description|truncatewords:15 }}</p>
-                            <p><strong>Website:</strong> <a href="{{ application.job.company_website }}" class="text-primary" target="_blank">{{ application.job.company_website }}</a></p>
-                            
+
+                            <div class="small text-muted">
+                                <p><strong>Location:</strong> {{ application.job.job_location }}</p>
+                                <p><strong>Salary:</strong> ₹{{ application.job.salary_package }}</p>
+                                <p><strong>Eligibility:</strong> {{ application.job.eligibility }}</p>
+                                <p><strong>Description:</strong> {{ application.job.job_description|truncatewords:15 }}</p>
+                                <p><strong>Website:</strong> 
+                                    <a href="{{ application.job.company_website }}" class="link-primary" target="_blank">
+                                        {{ application.job.company_website }}
+                                    </a>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <div class="alert alert-warning" role="alert">
-            You have not applied to any jobs yet.
+        <div class="alert alert-warning text-center" role="alert">
+            You haven't applied to any jobs yet.
         </div>
     {% endif %}
 </div>

@@ -25,7 +25,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # This ensures the session ends when the
 SECRET_KEY = 'django-insecure-&re-58v0)p_3r38idi=&mjs48@4l_(m*-+8m6njpw4gr^ojc0b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -181,9 +181,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'CampusHire','media')
 
 import dj_database_url
-
+TIME_ZONE = 'Asia/Kolkata'
+USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 
-ALLOWED_HOSTS = ['GaneshNagpure.pythonanywhere.com']
+# ALLOWED_HOSTS = ['GaneshNagpure.pythonanywhere.com']

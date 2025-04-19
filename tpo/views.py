@@ -3,13 +3,228 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
 from .models import Tpo, Job
 # Create your views here.
+# def tpo_dashboard(request):
+#     if "tpo_id" not in request.session:
+#         messages.error(request, "You need to log in first.")
+#         return redirect("tpo_login")
+#     tpo = Tpo.objects.get(id=request.session["tpo_id"])
+
+#     return render(request, 'tpo_dashboard.html', { 'tpo': tpo })
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Job
+from users.models import JobApplication, User
+from tpo.models import Tpo
 def tpo_dashboard(request):
     if "tpo_id" not in request.session:
         messages.error(request, "You need to log in first.")
         return redirect("tpo_login")
+    
     tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    
+    # Total counts and statistics
+    total_jobs = Job.objects.count()
+    total_applications = JobApplication.objects.count()
+    total_candidates = User.objects.count()
+    shortlisted = JobApplication.objects.filter(status="shortlisted").count()
+    ongoing_interviews = JobApplication.objects.filter(status="interviewing").count()
+    placed = JobApplication.objects.filter(status="placed").count()
+    rejected = JobApplication.objects.filter(status="rejected").count()
 
-    return render(request, 'tpo_dashboard.html', { 'tpo': tpo })
+    job_details = Job.objects.all()
+
+    # Create a dictionary with job-wise application counts
+    job_application_counts = {
+        job.id: {
+            "total": JobApplication.objects.filter(job=job).count(),
+            "shortlisted": JobApplication.objects.filter(job=job, status="shortlisted").count(),
+            "interviewing": JobApplication.objects.filter(job=job, status="interviewing").count(),
+            "placed": JobApplication.objects.filter(job=job, status="placed").count(),
+            "rejected": JobApplication.objects.filter(job=job, status="rejected").count(),
+        }
+        for job in job_details
+    }
+
+    # Debugging: print the job_application_counts to ensure it's being populated
+    print("Job Application Counts:", job_application_counts)
+
+    context = {
+        'tpo': tpo,
+        'total_jobs': total_jobs,
+        'total_applications': total_applications,
+        'total_candidates': total_candidates,
+        'shortlisted': shortlisted,
+        'ongoing_interviews': ongoing_interviews,
+        'placed': placed,
+        'rejected': rejected,
+        'job_details': job_details,
+        'job_application_counts': job_application_counts,
+    }
+
+    return render(request, 'tpo_dashboard.html', context)
+
+# import openpyxl
+# from django.http import HttpResponse
+# from django.utils.dateparse import parse_date
+# from datetime import datetime
+# from users.models import Job  # or your model name
+
+# def export_to_excel(request):
+#     from_date = request.GET.get('from_date')
+#     to_date = request.GET.get('to_date')
+
+#     if from_date and to_date:
+#         from_date = parse_date(from_date)
+#         to_date = parse_date(to_date)
+
+#         jobs = Job.objects.filter(created_at__range=(from_date, to_date))
+#     else:
+#         jobs = Job.objects.all()
+
+#     # Create workbook
+#     wb = openpyxl.Workbook()
+#     ws = wb.active
+#     ws.title = "Job Listings"
+
+#     # Add headers
+#     ws.append(['Job Title', 'Company', 'Location', 'Status', 'Created At'])
+
+#     for job in jobs:
+#         ws.append([
+#             job.role,
+#             job.company,
+#             job.job_location,
+#             'Active' if job.is_active else 'Inactive',
+#             job.created_at.strftime("%Y-%m-%d")
+#         ])
+
+#     # Prepare response
+#     response = HttpResponse(
+#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+#     )
+#     response['Content-Disposition'] = f'attachment; filename=jobs_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+#     wb.save(response)
+#     return response
+
+# import openpyxl
+# from django.http import HttpResponse
+# from django.utils.dateparse import parse_date
+# from django.utils.timezone import make_aware
+# from datetime import datetime
+# from users.models import Job  # Make sure you're importing the correct model
+
+# def export_to_excel(request):
+#     # Get from_date and to_date from the GET request
+#     from_date_str = request.GET.get('from_date')
+#     to_date_str = request.GET.get('to_date')
+
+#     # Check if both dates are provided
+#     if from_date_str and to_date_str:
+#         # Parse the date strings into datetime objects and make them timezone-aware
+#         from_date = make_aware(datetime.strptime(from_date_str, '%Y-%m-%d'))
+#         to_date = make_aware(datetime.strptime(to_date_str, '%Y-%m-%d'))
+        
+#         # Filter the jobs by the date range
+#         jobs = Job.objects.filter(created_at__range=(from_date, to_date))
+#     else:
+#         # If no dates are provided, fetch all jobs
+#         jobs = Job.objects.all()
+
+#     # Create a new Excel workbook and set the sheet title
+#     wb = openpyxl.Workbook()
+#     ws = wb.active
+#     ws.title = "Job Listings"
+
+#     # Add headers to the Excel sheet
+#     ws.append(['Job Title', 'Company', 'Location', 'Status', 'Created At'])
+
+#     # Add job data to the Excel sheet
+#     for job in jobs:
+#         ws.append([
+#             job.role,
+#             job.company,
+#             job.job_location,
+#             'Active' if job.is_active else 'Inactive',
+#             job.created_at.strftime("%Y-%m-%d")  # Formatting created_at as a string
+#         ])
+
+#     # Prepare the HTTP response with the Excel file as an attachment
+#     response = HttpResponse(
+#         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+#     )
+#     response['Content-Disposition'] = f'attachment; filename=jobs_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+
+#     # Save the workbook to the response, which will trigger the download
+#     wb.save(response)
+#     return response
+
+import openpyxl
+from django.http import HttpResponse
+from django.utils.dateparse import parse_date
+from django.utils.timezone import make_aware
+from datetime import datetime
+from users.models import Job  # Adjust import if necessary
+
+def export_to_excel(request):
+    # Get from_date and to_date from the GET request
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
+
+    # Check if both dates are provided
+    if from_date_str and to_date_str:
+        # Parse the date strings into datetime objects and make them timezone-aware
+        from_date = make_aware(datetime.strptime(from_date_str, '%Y-%m-%d'))
+        to_date = make_aware(datetime.strptime(to_date_str, '%Y-%m-%d'))
+
+        # Debugging: Log the filtered date range
+        # print(f"Filtering jobs from {from_date} to {to_date}")
+
+        # Filter the jobs by the date range
+        jobs = Job.objects.filter(created_at__range=(from_date, to_date))
+
+        # Debugging: log the number of jobs retrieved
+    #     print(f"Filtered Jobs Count: {jobs.count()}")
+    #     print("Jobs:", jobs)
+    # else:
+        # If no dates are provided, fetch all jobs
+        jobs = Job.objects.all()
+
+    # Create a new Excel workbook and set the sheet title
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Job Listings"
+
+    # Add headers to the Excel sheet
+    ws.append(['Job Title', 'Company', 'Location', 'Status', 'Created At'])
+
+    # Add job data to the Excel sheet if there are jobs
+    if jobs.exists():
+        for job in jobs:
+            ws.append([
+                job.role,
+                job.company,
+                job.job_location,
+                'Active' if job.is_active else 'Inactive',
+                job.created_at.strftime("%Y-%m-%d")  # Formatting created_at as a string
+            ])
+    else:
+        # No jobs found in the filtered range, notify user
+        ws.append(['No jobs found in the selected date range.'])
+
+    # Prepare the HTTP response with the Excel file as an attachment
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    )
+    response['Content-Disposition'] = f'attachment; filename=jobs_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+
+    # Save the workbook to the response, which will trigger the download
+    wb.save(response)
+    return response
+
+
+
 
 def tpo_registration(request):
     if request.method == 'POST':
@@ -280,3 +495,68 @@ def toggle_alumni_visibility(request, alumni_id):
 def alumni_list(request):
     alumni = Alumni.objects.all().order_by("-id")
     return render(request, "alumni_list.html", {"alumni": alumni})
+
+
+# from django.shortcuts import render, get_object_or_404, redirect
+# from users.models import JobApplication
+# from tpo.models import Job
+# from users.models import User
+# from users.models import APPLICATION_STATUS_CHOICES
+
+# def tpo_applications_view(request):
+#     applications = JobApplication.objects.select_related('student', 'job').all()
+
+#     return render(request, 'tpo_applications.html', {
+#         'applications': applications,
+#         'APPLICATION_STATUS_CHOICES': APPLICATION_STATUS_CHOICES,  # If you need this in the template
+#     })
+
+# def update_application_status(request, application_id):
+#     application = get_object_or_404(JobApplication, id=application_id)
+
+#     if request.method == 'POST':
+#         new_status = request.POST.get('status')
+#         if new_status in dict(APPLICATION_STATUS_CHOICES):
+#             application.status = new_status
+#             application.save()
+#             return redirect('tpo_applications_view')  # or wherever your dashboard is
+
+#     return render(request, 'tpo/update_status.html', {
+#         'application': application,
+#         'status_choices': APPLICATION_STATUS_CHOICES
+#     })
+from django.shortcuts import render
+from users.models import JobApplication
+
+def tpo_applications_view(request):
+    # Fetch all job applications for TPO to view
+    applications = JobApplication.objects.select_related('student', 'job').all()
+    
+    # Pass the choices for the status field to the template
+    status_choices = JobApplication._meta.get_field('status').choices
+    
+    return render(request, 'job_applications.html', {
+        'applications': applications,
+        'status_choices': status_choices,
+    })
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
+from users.models import JobApplication
+
+def update_application_status(request, application_id):
+    # Fetch the application
+    application = get_object_or_404(JobApplication, id=application_id)
+    
+    if request.method == 'POST':
+        # Get the selected status from the form
+        new_status = request.POST.get('status')
+        if new_status:
+            # Update the status
+            application.status = new_status
+            application.save()
+            return redirect('tpo_applications')  # Redirect to the applications page
+
+    # If it's not a POST request, return an error or a message
+    return HttpResponse('Invalid request', status=400)
+

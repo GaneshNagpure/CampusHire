@@ -1,4 +1,4 @@
-{% extends 'base/dashboardbase.html' %}
+{% extends 'base/base.html' %}
 {% block content %}
 <style>
   .form-container {
@@ -89,9 +89,14 @@
 
 <div class="form-container">
   <h2>Verify OTP</h2>
-  {% for message in messages %}
-    <p class="error-message">{{ message }}</p>
-  {% endfor %}
+  {% if messages %}
+              <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                  <p>{{ message }}</p>
+                {% endfor %}
+              </div>
+  {% endif %}
+
   <form method="POST">
     {% csrf_token %}
     <label for="otp">Enter the OTP sent to your email:</label>
@@ -99,4 +104,17 @@
     <button type="submit">Verify OTP</button>
   </form>
 </div>
+<script>
+  
+  // Automatically close alert messages after 3 seconds
+  setTimeout(function() {
+    let alerts = document.querySelectorAll(".alert");
+    alerts.forEach(alert => {
+      alert.style.transition = "opacity 0.5s";
+      alert.style.opacity = "0";
+      setTimeout(() => alert.remove(), 500);
+    });
+  }, 3000); // 3000ms = 3 seconds
+
+</script>
 {% endblock %}

@@ -252,7 +252,7 @@ def dashboard(request):
     # Fetch all jobs applied by the student
     applications = JobApplication.objects.filter(student=user)
 
-    messages.success(request, f"Welcome back, {user.name}!")
+    # messages.success(request, f"Welcome back, {user.name}!")
 
     return render(request, 'dashboard.html', {
         'user': user,
@@ -307,13 +307,14 @@ def contact(request):
 
         # Confirmation email to the user
         confirmation_email = EmailMessage(
-            subject="Thank You for Contacting Us - Zeal College Placement Portal",
+            subject="Thank You for Contacting Us -  CampusHire The Zeal College Placement Portal",
             body=f"""
             Hi {name},
 
             Thank you for reaching out! We’ve received your message with the subject '{subject}'. Our placement team will get back to you soon.
 
             Best regards,
+            CampusHire Team
             Zeal College Placement Department
             """,
             from_email='your-email@gmail.com',  # Replace with your email
@@ -822,9 +823,46 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User  # Make sure to import your custom User model
 
+# def change_password(request):
+    
+#     if 'user_id' not in request.session:
+#         messages.error(request, "Please log in to change your password.")
+#         return redirect('login')
+
+#     if request.method == 'POST':
+#         current_password = request.POST.get('current_password')
+#         new_password = request.POST.get('new_password')
+#         confirm_password = request.POST.get('confirm_password')
+
+#         try:
+#             user = User.objects.get(id=request.session['user_id'])
+
+#             if user.password != current_password:
+#                 messages.error(request, "Current password is incorrect.")
+#             elif new_password != confirm_password:
+#                 messages.error(request, "New passwords do not match.")
+#             else:
+#                 user.password = new_password  # You might want to hash this in real apps
+#                 user.save()
+#                 messages.success(request, "Password changed successfully!")
+#                 return redirect('dashboard')
+
+#         except User.DoesNotExist:
+#             messages.error(request, "User not found. Please log in again.")
+#             return redirect('login')
+
+#     return render(request, 'change_password.html')
+
 def change_password(request):
     if 'user_id' not in request.session:
         messages.error(request, "Please log in to change your password.")
+        return redirect('login')
+
+    user = None
+    try:
+        user = User.objects.get(id=request.session['user_id'])
+    except User.DoesNotExist:
+        messages.error(request, "User not found. Please log in again.")
         return redirect('login')
 
     if request.method == 'POST':
@@ -832,24 +870,19 @@ def change_password(request):
         new_password = request.POST.get('new_password')
         confirm_password = request.POST.get('confirm_password')
 
-        try:
-            user = User.objects.get(id=request.session['user_id'])
+        if user.password != current_password:
+            messages.error(request, "Current password is incorrect.")
+        elif new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+        else:
+            user.password = new_password  # In real apps, use hashing
+            user.save()
+            messages.success(request, "Password changed successfully!")
+            return redirect('dashboard')
 
-            if user.password != current_password:
-                messages.error(request, "Current password is incorrect.")
-            elif new_password != confirm_password:
-                messages.error(request, "New passwords do not match.")
-            else:
-                user.password = new_password  # You might want to hash this in real apps
-                user.save()
-                messages.success(request, "Password changed successfully!")
-                return redirect('dashboard')
+    return render(request, 'change_password.html', {'user': user})
 
-        except User.DoesNotExist:
-            messages.error(request, "User not found. Please log in again.")
-            return redirect('login')
-
-    return render(request, 'change_password.html')
+    
 # views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -858,10 +891,6 @@ from django.core.mail import send_mail
 import random
 
 def forgot_password(request):
-    if 'user_id' not in request.session:
-        messages.error(request, "Please log in to change your password.")
-
-        return redirect('login')
     if request.method == 'POST':
         email = request.POST.get('email')
         try:
@@ -885,9 +914,6 @@ def forgot_password(request):
 
 
 def verify_otp(request):
-    if 'user_id' not in request.session:
-        messages.error(request, "Please log in to verify otp.")
-        return redirect('login')
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
@@ -907,9 +933,6 @@ def verify_otp(request):
 
 
 def reset_password(request):
-    if 'user_id' not in request.session:
-        messages.error(request, "Please log in to reset your password.")
-        return redirect('login')
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
@@ -1002,10 +1025,37 @@ def my_applications(request):
     user_id = request.session['user_id']
     user = User.objects.get(id=user_id)
 
-    applications = JobApplication.objects.filter(student=user).select_related('job')
+    applications = JobApplication.objects.filter(student=user).select_related('job').order_by('-applied_at')
+    if not applications.exists():
+        messages.info(request, "You have no job applications.")
+        return redirect('dashboard')
 
     return render(request, 'applications.html', {
         'user': user,
         'applications': applications,
     })
 
+
+
+
+# from collections import defaultdict
+
+# def my_applications(request):
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+
+#     user_id = request.session['user_id']
+#     user = User.objects.get(id=user_id)
+
+#     # Fetch all job applications by this student
+#     applications = JobApplication.objects.filter(student=user).select_related('job')
+
+#     # Group applications by status
+#     grouped_applications = defaultdict(list)
+#     for app in applications:
+#         grouped_applications[app.status].append(app)
+
+#     return render(request, 'applications.html', {
+#         'user': user,
+#         'grouped_applications': grouped_applications
+#     })

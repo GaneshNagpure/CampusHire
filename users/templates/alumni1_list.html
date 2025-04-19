@@ -1,95 +1,152 @@
 {% extends "base/base.html" %}
 {% load static %}
-
 {% block title %}Our Alumni{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <!-- Swiping Cards Section -->
-    <h2 class="text-center fw-bold mb-4 text-primary">Featured Alumni</h2>
+<div class="container-fluid p-0">
 
-    <div id="alumniCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            {% for alum in alumni %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="d-flex justify-content-center">
-                    <div class="card text-center p-4 shadow border-0" style="width: 22rem; border-radius: 20px;">
-                        {% if alum.profile_pic %}
-                        <img src="{{ alum.profile_pic.url }}" class="rounded-circle mx-auto alumni-img mb-3" alt="{{ alum.name }}">
-                        {% else %}
-                        <img src="{% static 'images/default-user.png' %}" class="rounded-circle mx-auto alumni-img mb-3" alt="Default">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">{{ alum.name }}</h5>
-                            <p class="text-muted">{{ alum.position }} at {{ alum.current_company }}</p>
-                            {% if alum.linkedin_url %}
-                            <a href="{{ alum.linkedin_url }}" target="_blank" class="btn btn-outline-primary btn-sm mt-2">LinkedIn</a>
+    <!-- Banner with Overlay Text -->
+    <div class="position-relative">
+        <img src="{% static 'images/alumni.jpg' %}" alt="College Banner" class="img-fluid w-100" style="max-height: 340px; object-fit: cover;">
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+            <h1 class="display-5 fw-bold banner-text">Meet Our Proud Alumni</h1>
+            <p class="lead d-none d-md-block">Inspiring journeys that started here.</p>
+        </div>
+    </div>
+
+    <div class="container py-5">
+
+        <!-- Featured Alumni Carousel -->
+        <h2 class="text-center fw-bold mb-4 text-gradient-primary">🌟 Featured Alumni</h2>
+
+        <div id="alumniCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for alum in alumni %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="d-flex justify-content-center">
+                        <div class="card alumni-card text-center p-4 border-0 shadow" style="width: 22rem;">
+                            {% if alum.profile_pic %}
+                            <img src="{{ alum.profile_pic.url }}" class="rounded-circle mx-auto alumni-img mb-3" alt="{{ alum.name }}">
+                            {% else %}
+                            <img src="{% static 'images/default_alumni.jpeg' %}" class="rounded-circle mx-auto alumni-img mb-3" alt="Default">
                             {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">{{ alum.name }}</h5>
+                                <p class="text-muted">{{ alum.position }} at {{ alum.current_company }}</p>
+                                {% if alum.linkedin_url %}
+                                <a href="{{ alum.linkedin_url }}" target="_blank" class="btn linkedin-btn mt-2">LinkedIn</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+
+            <button class="carousel-control-prev" type="button" data-bs-target="#alumniCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#alumniCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+            </button>
         </div>
 
-        <button class="carousel-control-prev" type="button" data-bs-target="#alumniCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#alumniCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
-        </button>
-    </div>
-
-    <!-- All Alumni Grid Section -->
-    <h3 class="text-center fw-bold mb-4 text-secondary">All Our Alumni</h3>
-    <div class="row g-4">
-        {% for alum in alumni %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card text-center shadow p-3 border-0 h-100">
-                {% if alum.profile_pic %}
-                <img src="{{ alum.profile_pic.url }}" class="rounded-circle mx-auto alumni-img mb-3" alt="{{ alum.name }}">
-                {% else %}
-                <img src="{% static 'images/default-user.png' %}" class="rounded-circle mx-auto alumni-img mb-3" alt="Default">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">{{ alum.name }}</h5>
-                    <p class="text-muted">{{ alum.position }} at {{ alum.current_company }}</p>
-                    {% if alum.linkedin_url %}
-                    <a href="{{ alum.linkedin_url }}" target="_blank" class="btn btn-outline-secondary btn-sm">LinkedIn</a>
+        <!-- All Alumni Grid -->
+        <h3 class="text-center fw-bold mb-4 text-gradient-secondary">🎓 All Our Alumni</h3>
+        <div class="row g-4">
+            {% for alum in alumni %}
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card alumni-card text-center p-4 border-0 h-100 shadow-sm">
+                    {% if alum.profile_pic %}
+                    <img src="{{ alum.profile_pic.url }}" class="rounded-circle mx-auto alumni-img mb-3" alt="{{ alum.name }}">
+                    {% else %}
+                    <img src="{% static 'images/default_alumni.jpeg' %}" class="rounded-circle mx-auto alumni-img mb-3" alt="Default">
                     {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">{{ alum.name }}</h5>
+                        <p class="text-muted">{{ alum.position }} at {{ alum.current_company }}</p>
+                        <p class="text-muted">{{ alum.course }} batch {{ alum.passing_year}}</p>
+
+                        {% if alum.linkedin_url %}
+                        <a href="{{ alum.linkedin_url }}" target="_blank" class="btn linkedin-btn mt-2">LinkedIn</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+            {% empty %}
+            <p class="text-center text-muted">No alumni profiles available at the moment.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-        <p class="text-center text-muted">No alumni profiles available at the moment.</p>
-        {% endfor %}
     </div>
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
+    .banner-text {
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+        animation: fadeInDown 1.2s ease-out;
+    }
+
     .alumni-img {
-        width: 160px;
-        height: 160px;
+        width: 140px;
+        height: 140px;
         object-fit: cover;
-        border: 5px solid #fff;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
+        border: 4px solid #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        transition: transform 0.4s ease;
     }
 
-    .card:hover .alumni-img {
-        transform: scale(1.05);
+    .alumni-card:hover .alumni-img {
+        transform: scale(1.08);
     }
 
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        width: 40px;
-        height: 40px;
+    .alumni-card {
+        border-radius: 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e3f2fd);
+        transition: box-shadow 0.3s ease;
     }
 
-    h2, h3 {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    .alumni-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .linkedin-btn {
+        background: #0077b5;
+        color: white;
+        border: none;
+        border-radius: 25px;
+        padding: 6px 20px;
+        font-weight: 500;
+        box-shadow: 0 4px 10px rgba(0, 119, 181, 0.3);
+        transition: background 0.3s ease;
+    }
+
+    .linkedin-btn:hover {
+        background: #005983;
+    }
+
+    .text-gradient-primary {
+        background: linear-gradient(to right, #007bff, #00c6ff);
+        /* -webkit-background-clip: text; */
+        -webkit-text-fill-color: transparent;
+    }
+
+    .text-gradient-secondary {
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        /* -webkit-background-clip: text; */
+        -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 {% endblock %}
@@ -101,7 +158,7 @@
         new bootstrap.Carousel(alumniCarousel, {
             interval: 4000,
             ride: 'carousel',
-            wrap: true // makes it loop!
+            wrap: true
         });
     }
 </script>

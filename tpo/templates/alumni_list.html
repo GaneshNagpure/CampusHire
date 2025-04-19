@@ -1,12 +1,12 @@
 {% extends 'base1.html' %}
 {% block content %}
-<div class="w-full max-w-6xl mx-auto p-6">
+<div class="w-full p-6">
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold">Alumni List</h2>
+        <h2 class="text-3xl font-bold">Alumni List</h2>
         <a href="{% url 'add_alumni' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow text-sm">+ Add New</a>
     </div>
     <div class="overflow-x-auto bg-white shadow-md rounded-lg">
-        <table class="w-full text-sm text-left text-gray-700">
+        <table class="min-w-full text-sm text-left text-gray-700">
             <thead class="bg-gray-800 text-white">
                 <tr>
                     <th class="px-4 py-2 min-w-[120px]">Name</th>

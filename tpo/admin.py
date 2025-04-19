@@ -10,7 +10,7 @@ class TpoAdmin(admin.ModelAdmin):
 admin.site.register(Tpo, TpoAdmin)
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('company', 'role', 'salary_package', 'last_date_to_apply', 'eligibility', 'job_description', 'company_website', 'job_location', 'tpo', 'is_active')
+    list_display = ('company', 'role', 'salary_package', 'last_date_to_apply', 'eligibility', 'job_description', 'company_website', 'job_location', 'tpo', 'is_active', 'created_at')
     
 admin.site.register(Job, JobAdmin)
 

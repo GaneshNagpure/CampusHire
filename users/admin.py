@@ -97,11 +97,22 @@ class ProfileSkillsCertificationsAdmin(admin.ModelAdmin):
 
 admin.site.register(ProfileSkillsCertifications, ProfileSkillsCertificationsAdmin)
 
+# from django.contrib import admin
+# from .models import JobApplication
+
+# @admin.register(JobApplication)
+# class JobApplicationAdmin(admin.ModelAdmin):
+#     list_display = ('student', 'job', 'applied_at')
+#     list_filter = ('job', 'applied_at')
+#     search_fields = ('student__name', 'job__role')
 from django.contrib import admin
 from .models import JobApplication
 
 @admin.register(JobApplication)
 class JobApplicationAdmin(admin.ModelAdmin):
-    list_display = ('student', 'job', 'applied_at')
-    list_filter = ('job', 'applied_at')
+    list_display = ('student', 'job', 'status', 'applied_at')  # Added 'status' to list_display
+    list_filter = ('job', 'status', 'applied_at')  # Added 'status' to list_filter
     search_fields = ('student__name', 'job__role')
+
+    # Enable editing the 'status' field directly in the list view
+    list_editable = ('status',)

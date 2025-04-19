@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('tpo_dashboard', views.tpo_dashboard, name='tpo_dashboard'),
+    path('dashboard/export/', views.export_to_excel, name='export_to_excel'),
     path('tpo_registration/', views.tpo_registration, name='tpo_registration'),
     path('tpo_logout/', views.tpo_logout, name='tpo_logout'),
     path('tpo_account/', views.tpo_update_profile, name='tpo_account'),
@@ -18,5 +19,6 @@ urlpatterns = [
     path("alumni/toggle/<int:alumni_id>/", views.toggle_alumni_visibility, name="toggle_alumni"),
     path("alumni/list/", views.alumni_list, name="alumni_list"),
 
-    
+    path('applications/', views.tpo_applications_view, name='tpo_applications'),
+    path('applications/update_status/<int:application_id>/', views.update_application_status, name='update_application_status'),
 ]

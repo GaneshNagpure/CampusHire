@@ -13,6 +13,8 @@ class Tpo(models.Model):
     def __str__(self):
         return self.full_name
     
+from django.utils import timezone
+from datetime import timedelta
 class Job(models.Model):
     company = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
@@ -24,7 +26,11 @@ class Job(models.Model):
     job_location = models.CharField(max_length=100, blank=True, null=True)  # Optional field for job location
     tpo = models.ForeignKey(Tpo, on_delete=models.CASCADE, related_name='jobs',default=True)  # Link to TPO who created the job
     is_active = models.BooleanField(default=True )  # Flag to indicate if the job is active or
+    # created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the job was created
+    # updated_at = models.DateTimeField(auto_now=True)  # Timestamp when the job was last updated
 
+    created_at = models.DateTimeField(default=timezone.now)
+    # created_at= models.DateTimeField(auto_now_add=True)
     
 
     def __str__(self):
