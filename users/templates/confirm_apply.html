@@ -14,7 +14,7 @@
             <p><strong>Eligibility:</strong> {{ job.eligibility }}</p>
             <p><strong>Website:</strong> <a href="{{ job.company_website }}" target="_blank">{{ job.company_website }}</a></p>
             <p><strong>Deadline:</strong> {{ job.last_date_to_apply }}</p>
-            <p><strong>Description:</strong><br>{{ job.description|linebreaks }}</p>
+            <p><strong>Description:</strong><br>{{ job.job_description|linebreaks }}</p>
 
             <form method="POST">
                 {% csrf_token %}

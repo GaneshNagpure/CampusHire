@@ -251,8 +251,47 @@ def dashboard(request):
 
     # Fetch all jobs applied by the student
     applications = JobApplication.objects.filter(student=user)
+    completion_percentage = profile.profile_completion_percentage()
 
-    # messages.success(request, f"Welcome back, {user.name}!")
+    # Identify missing fields
+    missing_fields = []
+
+    field_labels = {
+        'headline': 'Headline',
+        'contact': 'Contact Number',
+        'github': 'GitHub Link',
+        'linkedin': 'LinkedIn Profile',
+        'profile_pic': 'Profile Picture',
+        'resume': 'Resume',
+        'street_address': 'Street Address',
+        'city': 'City',
+        'state': 'State',
+        'zip_code': 'Zip Code',
+        'country': 'Country',
+        'enrollment': 'Enrollment Number',
+        'dob': 'Date of Birth',
+    }
+
+    for field, label in field_labels.items():
+        value = getattr(profile, field, None)
+        if not value or str(value).strip() == '':
+            missing_fields.append(label)
+
+    if not profile.education.exists():
+        missing_fields.append("Education Details")
+
+    if not profile.experience.exists():
+        missing_fields.append("Experience Details")
+
+    if not skillscertifications.skills:
+        missing_fields.append("Skills")
+
+    if not skillscertifications.certifications.exists():
+        missing_fields.append("Certifications")
+
+    # Fetch jobs
+    recommended_jobs = Job.objects.filter(is_active=True).order_by('-id')
+    applications = JobApplication.objects.filter(student=user)
 
     return render(request, 'dashboard.html', {
         'user': user,
@@ -261,9 +300,9 @@ def dashboard(request):
         'certifications': certifications,
         'recommended_jobs': recommended_jobs,
         'applications': applications,
+        'completion_percentage': round(completion_percentage),
+        'missing_fields': missing_fields,
     })
-
-
 
 def logout(request):
     if 'user_id' in request.session:
@@ -378,6 +417,89 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import User, Profile, Education, Experience, ProfileSkillsCertifications, Certification
 from django.core.files.storage import FileSystemStorage
+# def profile(request):
+#     user_id = request.session.get('user_id')
+    
+#     if not user_id:
+#         messages.error(request, "You need to log in to view your profile.")
+#         return redirect('login')
+
+#     try:
+#         user = User.objects.get(id=user_id)
+#         profile, created = Profile.objects.get_or_create(user=user)
+#         profile_data, created = ProfileSkillsCertifications.objects.get_or_create(profile=profile)
+
+#         if request.method == "POST":
+#             # Update profile details
+#             profile.headline = request.POST.get("headline")
+#             profile.contact = request.POST.get("contact")
+#             profile.github = request.POST.get("github")
+#             profile.linkedin = request.POST.get("linkedin")
+#             profile.profile_pic = request.FILES.get("profile_pic") or profile.profile_pic
+#             profile.resume = request.FILES.get("resume") or profile.resume
+#             profile.street_address = request.POST.get("street_address")
+#             profile.city = request.POST.get("city")
+#             profile.state = request.POST.get("state")
+#             profile.zip_code = request.POST.get("zip_code")
+#             profile.country = request.POST.get("country")
+#             profile.enrollment =request.POST.get("enrollment")
+#             profile.dob = request.POST.get("dob")
+#             profile.save()
+
+#             # Clear and save other profile details
+#             Education.objects.filter(profile=profile).delete()
+#             Experience.objects.filter(profile=profile).delete()
+
+#             for level, college, degree in zip(
+#                 request.POST.getlist("education_level[]"),
+#                 request.POST.getlist("college[]"),
+#                 request.POST.getlist("degree[]")
+#             ):
+#                 if college and degree:
+#                     Education.objects.create(profile=profile, education_level=level, college=college, degree=degree)
+
+#             for company, role, start_date, end_date, role_type in zip(
+#                 request.POST.getlist("company[]"),
+#                 request.POST.getlist("role[]"),
+#                 request.POST.getlist("start_date[]"),
+#                 request.POST.getlist("end_date[]"),
+#                 request.POST.getlist("role_type[]")
+#             ):
+#                 if company and role:
+#                     Experience.objects.create(
+#                         profile=profile,
+#                         company=company,
+#                         role=role,
+#                         start_date=start_date,
+#                         end_date=end_date if end_date else None,
+#                         role_type=role_type
+#                     )
+
+#             # ✅ Store skills & certifications as lists instead of separate models
+#             profile_data.skills = request.POST.getlist("skills[]")
+#             # profile_data.certifications = request.POST.getlist("certifications[]")
+#             # profile_data.save()
+#             # Get certification names and uploaded files
+#             certification_names = request.POST.getlist("certifications[]")
+#             certification_files = request.FILES.getlist("certification_files[]")
+
+#             certifications_combined = []
+
+#             # Combine name and file
+#             for certification_name, file in zip(certification_names, certification_files):
+#                 Certification.objects.create(profile=profile_data, certification_name=certification_name, file=file)
+#             profile_data.save()
+        
+#             messages.success(request, "Profile updated successfully!")
+#             return redirect("profile")  # ✅ Redirect after POST
+        
+#         # ✅ Handle GET request (Render the profile page)
+#         return render(request, "profile.html", {"user": user, "profile": profile, "profile_data": profile_data, })
+
+#     except User.DoesNotExist:
+#         messages.error(request, "User not found. Please log in again.")
+#         return redirect('login')
+
 def profile(request):
     user_id = request.session.get('user_id')
     
@@ -405,6 +527,7 @@ def profile(request):
             profile.country = request.POST.get("country")
             profile.enrollment =request.POST.get("enrollment")
             profile.dob = request.POST.get("dob")
+            profile.experience_type = request.POST.get("experience_type", "Fresher")  # <-- Fetch experience type
             profile.save()
 
             # Clear and save other profile details
@@ -436,7 +559,7 @@ def profile(request):
                         role_type=role_type
                     )
 
-            # ✅ Store skills & certifications as lists instead of separate models
+            # Store skills & certifications as lists instead of separate models
             profile_data.skills = request.POST.getlist("skills[]")
             # profile_data.certifications = request.POST.getlist("certifications[]")
             # profile_data.save()
@@ -451,16 +574,27 @@ def profile(request):
                 Certification.objects.create(profile=profile_data, certification_name=certification_name, file=file)
             profile_data.save()
 
+            messages.success(request, "Profile Created successfully!")
+            return redirect("dashboard")  # Redirect after POST
 
-            messages.success(request, "Profile updated successfully!")
-            return redirect("profile")  # ✅ Redirect after POST
+        # Handle GET request (Render the profile page)
+        completion_percentage = round(profile.profile_completion_percentage(), 2)  # Calculate profile completion
 
-        # ✅ Handle GET request (Render the profile page)
-        return render(request, "profile.html", {"user": user, "profile": profile, "profile_data": profile_data})
+        return render(
+            request,
+            "profile.html",
+            {
+                "user": user,
+                "profile": profile,
+                "profile_data": profile_data,
+                "completion_percentage": completion_percentage,  # Pass it to the template
+            }
+        )
 
     except User.DoesNotExist:
         messages.error(request, "User not found. Please log in again.")
         return redirect('login')
+
 
 from django.shortcuts import render, get_object_or_404
 
@@ -785,7 +919,7 @@ def edit_profile(request):
                         Certification.objects.create(profile=profile_data, certification_name=name, file=file)
 
             messages.success(request, "Profile updated successfully!")
-            return redirect("profile")
+            return redirect("dashboard")
 
         # GET request: show existing data
         certifications = profile_data.certifications.all()
@@ -990,10 +1124,35 @@ def alumni_list_student(request):
 # from .models import JobApplication
 
 
-from django.shortcuts import render, redirect, get_object_or_404
+# from django.shortcuts import render, redirect, get_object_or_404
+# from django.contrib import messages
+# from tpo.models import Job
+# from .models import JobApplication, User
+
+# def apply_job(request, job_id):
+#     if 'user_id' not in request.session:
+#         return redirect('login')
+
+#     user = get_object_or_404(User, id=request.session['user_id'])
+#     job = get_object_or_404(Job, id=job_id)
+
+#     # Check if already applied
+#     if JobApplication.objects.filter(student=user, job=job).exists():
+#         messages.info(request, "You have already applied for this job.")
+#         return redirect('dashboard')
+
+#     if request.method == "POST":
+#         JobApplication.objects.create(student=user, job=job)
+#         messages.success(request, f"You successfully applied for {job.role} at {job.company}")
+#         return redirect('dashboard')
+
+#     return render(request, 'confirm_apply.html', {
+#         'job': job
+#     })
+
 from django.contrib import messages
-from tpo.models import Job
-from .models import JobApplication, User
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import User, Job, JobApplication, Profile
 
 def apply_job(request, job_id):
     if 'user_id' not in request.session:
@@ -1001,6 +1160,14 @@ def apply_job(request, job_id):
 
     user = get_object_or_404(User, id=request.session['user_id'])
     job = get_object_or_404(Job, id=job_id)
+
+    # Check if the profile completion is more than 90%
+    profile, created = Profile.objects.get_or_create(user=user)
+    completion_percentage = profile.profile_completion_percentage()
+
+    if completion_percentage < 80:
+        messages.warning(request, "Your profile must be at least 80% complete to apply for jobs.")
+        return redirect('dashboard')
 
     # Check if already applied
     if JobApplication.objects.filter(student=user, job=job).exists():
@@ -1015,7 +1182,6 @@ def apply_job(request, job_id):
     return render(request, 'confirm_apply.html', {
         'job': job
     })
-
 
 
 def my_applications(request):

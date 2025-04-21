@@ -45,7 +45,7 @@
                                 <p><strong>Location:</strong> {{ application.job.job_location }}</p>
                                 <p><strong>Salary:</strong> ₹{{ application.job.salary_package }}</p>
                                 <p><strong>Eligibility:</strong> {{ application.job.eligibility }}</p>
-                                <p><strong>Description:</strong> {{ application.job.job_description|truncatewords:15 }}</p>
+                                <p><strong>Description:</strong> {{ application.job.job_description }}</p>
                                 <p><strong>Website:</strong> 
                                     <a href="{{ application.job.company_website }}" class="link-primary" target="_blank">
                                         {{ application.job.company_website }}

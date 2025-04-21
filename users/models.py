@@ -39,6 +39,33 @@ class FAQ(models.Model):
 from django.db import models
 from .models import User
 
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
+#     name = models.CharField(max_length=100, blank=True, null=True)  # Store name separately
+#     email = models.EmailField(blank=True, null=True)  # Store email separately
+#     headline = models.CharField(max_length=255, blank=True, null=True)
+#     contact = models.CharField(max_length=15, blank=True, null=True)
+#     github = models.URLField(blank=True, null=True)
+#     linkedin = models.URLField(blank=True, null=True)
+#     profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+#     resume = models.FileField(upload_to='resumes/', blank=True, null=True)
+#     street_address = models.CharField(max_length=255, blank=True)
+#     city = models.CharField(max_length=100, blank=True)
+#     state = models.CharField(max_length=100, blank=True)
+#     zip_code = models.CharField(max_length=20, blank=True)
+#     country = models.CharField(max_length=100, blank=True)
+#     enrollment = models.CharField(max_length=100, blank=True)
+#     dob = models.DateField(null=True, blank=True)
+
+#     def save(self, *args, **kwargs):
+#         """ Automatically sync name & email from User model. """
+#         if self.user:
+#             self.name = self.user.name
+#             self.email = self.user.email
+#         super().save(*args, **kwargs)
+#     def __str__(self):
+#         return self.name if self.name else "Profile without name"
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=100, blank=True, null=True)  # Store name separately
@@ -56,6 +83,11 @@ class Profile(models.Model):
     country = models.CharField(max_length=100, blank=True)
     enrollment = models.CharField(max_length=100, blank=True)
     dob = models.DateField(null=True, blank=True)
+    experience_type = models.CharField(
+        max_length=50,
+        choices=[('Fresher', 'Fresher'), ('Experienced', 'Experienced')],
+        default='Fresher'
+    )
 
     def save(self, *args, **kwargs):
         """ Automatically sync name & email from User model. """
@@ -65,6 +97,47 @@ class Profile(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.name if self.name else "Profile without name"
+
+    def profile_completion_percentage(self):
+        base_fields = [
+            self.name,
+            self.email,
+            self.headline,
+            self.contact,
+            self.github,
+            self.linkedin,
+            self.profile_pic,
+            self.resume,
+            self.street_address,
+            self.city,
+            self.state,
+            self.zip_code,
+            self.country,
+            self.enrollment,
+            self.dob,
+        ]
+
+        filled_base = sum(1 for field in base_fields if field not in [None, '', ' '])
+        total_base = len(base_fields)
+
+        # Related data
+        has_education = self.education.exists()
+        has_experience = self.experience.exists() if self.experience_type == 'Experienced' else True
+        has_skills = self.skills_certifications.skills if hasattr(self, 'skills_certifications') else []
+        has_certifications = self.skills_certifications.certifications.exists() if hasattr(self, 'skills_certifications') else False
+
+        extra_filled = sum([
+            1 if has_education else 0,
+            1 if has_experience else 0,
+            1 if has_skills else 0,
+            1 if has_certifications else 0,
+        ])
+
+        total_fields = total_base + 4  # base + education + experience + skills + certifications
+        total_filled = filled_base + extra_filled
+
+        return (total_filled / total_fields) * 100 if total_fields > 0 else 0
+
 
 
 class Education(models.Model):
@@ -80,6 +153,7 @@ class Experience(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     role_type = models.CharField(max_length=50, choices=[('Full-Time', 'Full-Time'), ('Internship', 'Internship')])
+   
 
 # class ProfileSkillsCertifications(models.Model):
 #     profile = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name='skills_certifications')

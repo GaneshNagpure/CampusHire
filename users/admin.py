@@ -27,7 +27,7 @@ class FAQAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'headline', 'contact', 'github', 'linkedin','city','enrollment','dob','email','id','profile_pic','resume')
+    list_display = ('user', 'headline', 'contact', 'github', 'linkedin','experience_type','city','enrollment','dob','email','id','profile_pic','resume')
     search_fields = ('user__username', 'headline', 'contact')
 
 @admin.register(Education)

@@ -6,6 +6,14 @@
     <h2>Edit Profile</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
 
         <!-- Personal Info -->
         <div class="mb-3">
@@ -286,6 +294,17 @@ function addExperience() {
 
     section.appendChild(div);
 }
+
+
+  // Automatically close alert messages after 3 seconds
+  setTimeout(function() {
+    let alerts = document.querySelectorAll(".alert");
+    alerts.forEach(alert => {
+      alert.style.transition = "opacity 0.5s";
+      alert.style.opacity = "0";
+      setTimeout(() => alert.remove(), 500);
+    });
+  }, 3000); // 3000ms = 3 seconds
 
 </script>
 

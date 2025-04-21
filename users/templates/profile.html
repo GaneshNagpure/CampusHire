@@ -50,7 +50,7 @@
                 
                     <div class="mb-3">
                         <label for="contact" class="form-label">Contact Number</label>
-                        <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number">
+                        <input type="text" class="form-control" id="contact" name="contact" placeholder="Enter your phone number" maxlength="10" required>
                     </div>
                 
                     <div class="mb-3">
@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="step d-none" id="step3">
-                    <h4>Experience</h4>
+                    <!-- <h4>Experience</h4>
                     <div id="experience-container">
                         <div class="experience-entry mb-3">
                             <label class="form-label">Company</label>
@@ -145,7 +145,47 @@
                     </div>
                     <button type="button" class="btn btn-secondary" id="add-experience">Add More</button>
                     <button type="button" class="btn btn-secondary prev-step">Previous</button>
-                    <button type="button" class="btn btn-primary next-step">Next</button> 
+                    <button type="button" class="btn btn-primary next-step">Next</button>  -->
+                    <div class="mb-3">
+                        <label for="experience_type" class="form-label">Experience Type</label>
+                        <select class="form-control" id="experience_type" name="experience_type">
+                            <option value="">-- Select --</option>
+                            <option value="fresher">Fresher</option>
+                            <option value="experienced">Experienced</option>
+                        </select>
+                    </div>
+                    
+                    <div id="experience-section" style="display: none;">
+                        <h4>Experience</h4>
+                        <div id="experience-container">
+                            <div class="experience-entry mb-3">
+                                <label class="form-label">Company</label>
+                                <input type="text" class="form-control" name="company[]">
+                    
+                                <label class="form-label">Role</label>
+                                <input type="text" class="form-control" name="role[]">
+                    
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control" name="start_date[]">
+                                
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control" name="end_date[]">
+                    
+                                <label class="form-label">Role Type</label>
+                                <select class="form-control" name="role_type[]">
+                                    <option value="Full-Time">Full-Time</option>
+                                    <option value="Internship">Internship</option>
+                                </select>
+                    
+                                <button type="button" class="btn btn-danger remove-experience" style="display: none;">Remove</button>
+                            </div>
+                        </div>
+                        <!-- <button type="button" class="btn btn-secondary" id="add-experience">Add More</button> -->
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="add-experience">Add More</button>
+                    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+                    <button type="button" class="btn btn-primary next-step">Next</button>
+                    
                 </div>
                 
                 <div class="step d-none" id="step4">
@@ -327,6 +367,44 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Submitting form...");
         document.getElementById("step5").classList.remove("d-none");
     });
+});
+
+document.getElementById("zip_code").addEventListener("blur", function () {
+    const pincode = this.value.trim();
+    if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+        fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+                const office = data[0].PostOffice[0];
+                document.getElementById("city").value = office.District;
+                document.getElementById("state").value = office.State;
+                document.getElementById("country").value = office.Country;
+            } else {
+                alert("Invalid or unavailable PIN code.");
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            alert("Failed to fetch location details.");
+        });
+    } else {
+        alert("Please enter a valid 6-digit Indian PIN code.");
+    }
+});
+document.getElementById("experience_type").addEventListener("change", function () {
+    const selected = this.value;
+    const experienceSection = document.getElementById("experience-section");
+
+    if (selected === "experienced") {
+        experienceSection.style.display = "block";
+    } else {
+        experienceSection.style.display = "none";
+
+        // Optional: clear experience fields if switching to fresher
+        const inputs = experienceSection.querySelectorAll("input, select");
+        inputs.forEach(input => input.value = "");
+    }
 });
 </script>>
 {% endblock %}
