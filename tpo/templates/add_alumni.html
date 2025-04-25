@@ -1,17 +1,126 @@
 {% extends 'base1.html' %}
+
+{% block title %}Add Alumni - ZEAL PLACEMENT{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>Add Alumni</h2>
-    <form method="POST" enctype="multipart/form-data">
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-dark">Add Alumni</h2>
+
+    <form method="POST" class="shadow-lg p-6 rounded-lg bg-white" style="border: 1px solid #ddd;">
         {% csrf_token %}
-        <input class="form-control my-2" type="text" name="name" placeholder="Full Name" required>
-        <input class="form-control my-2" type="email" name="email" placeholder="Email" required>
-        <input class="form-control my-2" type="text" name="course" placeholder="Course" required>
-        <input class="form-control my-2" type="number" name="passing_year" placeholder="Passing Year" required>
-        <input class="form-control my-2" type="text" name="current_company" placeholder="Current Company" required>
-        <input class="form-control my-2" type="text" name="position" placeholder="Position" required>
-        <input class="form-control my-2" type="file" name="profile_pic" placeholder="Upload Profile pic" required>
-        <button type="submit" class="btn btn-success mt-3">Add Alumni</button>
+
+        <!-- Success or error message box (if any) -->
+        <div id="message-box" class="alert alert-success d-none" role="alert">
+            Alumni added successfully!
+        </div>
+
+        <script>
+            setTimeout(function() {
+                document.getElementById("message-box").style.display = "none";
+            }, 3000); // Hide message after 3 seconds
+        </script>
+
+        <!-- Alumni Name Field -->
+        <div class="mb-4">
+            <label for="alumni_name" class="form-label font-weight-bold text-primary">Alumni Name</label>
+            <input type="text" id="alumni_name" name="alumni_name" class="form-control shadow-sm" placeholder="Enter alumni name" required>
+        </div>
+
+        <!-- Alumni Year Field -->
+        <div class="mb-4">
+            <label for="year_of_passing" class="form-label font-weight-bold text-primary">Year of Passing</label>
+            <input type="number" id="year_of_passing" name="year_of_passing" class="form-control shadow-sm" placeholder="Enter year of passing" required>
+        </div>
+
+        <!-- Alumni Current Role -->
+        <div class="mb-4">
+            <label for="current_role" class="form-label font-weight-bold text-primary">Current Role</label>
+            <input type="text" id="current_role" name="current_role" class="form-control shadow-sm" placeholder="Enter current role" required>
+        </div>
+
+        <!-- Alumni Current Company -->
+        <div class="mb-4">
+            <label for="current_company" class="form-label font-weight-bold text-primary">Current Company</label>
+            <input type="text" id="current_company" name="current_company" class="form-control shadow-sm" placeholder="Enter current company" required>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-5 py-2 shadow-lg hover:bg-green-700 transition-all ease-in-out duration-200">Add Alumni</button>
+        </div>
     </form>
 </div>
+
+{% block styles %}
+<style>
+    /* Overall container styling */
+    .container {
+        background-color: #f7f8fa;
+        padding-top: 50px;
+    }
+
+    /* Form card styling */
+    .card {
+        background-color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    /* Heading styling */
+    h2 {
+        font-weight: 600;
+        font-size: 2rem;
+        color: #4A4A4A;
+    }
+
+    /* Input fields and textarea styling */
+    .form-control {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+        padding: 12px;
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+    /* Label styling */
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    /* Button styling */
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    /* Message box (e.g., success message) */
+    #message-box {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 576px) {
+        h2 {
+            font-size: 1.5rem;
+        }
+        .form-control {
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
 {% endblock %}

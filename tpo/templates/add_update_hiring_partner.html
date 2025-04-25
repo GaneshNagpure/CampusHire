@@ -1,0 +1,131 @@
+{% extends 'base1.html' %}
+
+{% block title %}Dashboard - ZEAL PLACEMENT{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-dark">{{ action }} Hiring Partner</h2>
+    <form method="POST" enctype="multipart/form-data" class="shadow-lg p-6 rounded-lg bg-white" style="border: 1px solid #ddd;">
+        {% csrf_token %}
+
+        <!-- Success or error message box (if any) -->
+        <div id="message-box" class="alert alert-success d-none" role="alert">
+            Hiring partner added successfully!
+        </div>
+
+        <script>
+            setTimeout(function() {
+                document.getElementById("message-box").style.display = "none";
+            }, 3000); // Hide message after 3 seconds
+        </script>
+
+        <!-- Company Name Field -->
+        <div class="mb-4">
+            <label for="name" class="form-label font-weight-bold text-primary">Company Name</label>
+            <input type="text" id="name" name="name" value="{% if partner %}{{ partner.name }}{% endif %}" class="form-control shadow-sm" placeholder="Enter company name" required>
+        </div>
+
+        <!-- Description Field -->
+        <div class="mb-4">
+            <label for="description" class="form-label font-weight-bold text-primary">Description</label>
+            <textarea id="description" name="description" class="form-control shadow-sm" rows="4" placeholder="Enter company description" required>{% if partner %}{{ partner.description }}{% endif %}</textarea>
+        </div>
+
+        <!-- Company Logo Field -->
+        <div class="mb-4">
+            <label for="logo" class="form-label font-weight-bold text-primary">Company Logo</label>
+            <input type="file" id="logo" name="logo" class="form-control shadow-sm">
+        </div>
+
+        <!-- Website URL Field -->
+        <div class="mb-4">
+            <label for="website" class="form-label font-weight-bold text-primary">Website URL</label>
+            <input type="url" id="website" name="website" value="{% if partner %}{{ partner.website }}{% endif %}" class="form-control shadow-sm" placeholder="Enter company website" required>
+        </div>
+
+        <!-- Year Field -->
+        <div class="mb-4">
+            <label for="year" class="form-label font-weight-bold text-primary">Year</label>
+            <input type="number" id="year" name="year" value="{% if partner %}{{ partner.year }}{% else %}2025{% endif %}" class="form-control shadow-sm" required>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-5 py-2 shadow-lg hover:bg-green-700 transition-all ease-in-out duration-200">{{ action }} Partner</button>
+        </div>
+    </form>
+</div>
+
+{% block styles %}
+<style>
+    /* Overall container styling */
+    .container {
+        background-color: #f7f8fa;
+        padding-top: 50px;
+    }
+
+    /* Form card styling */
+    .card {
+        background-color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    /* Heading styling */
+    h2 {
+        font-weight: 600;
+        font-size: 2rem;
+        color: #4A4A4A;
+    }
+
+    /* Input fields and textarea styling */
+    .form-control {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+        padding: 12px;
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+    /* Label styling */
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    /* Button styling */
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    /* Message box (e.g., success message) */
+    #message-box {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 576px) {
+        h2 {
+            font-size: 1.5rem;
+        }
+        .form-control {
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Hiring Partners - ZEAL PLACEMENT{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-dark">Our Hiring Partners</h2>
+
+    <div class="row">
+        {% for partner in partners %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg rounded-3" style="border: none; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                <div class="card-img-wrapper">
+                    {% if partner.logo %}
+                    <img src="{{ partner.logo.url }}" class="card-img-top" alt="{{ partner.name }} Logo" style="height: 200px; object-fit: contain; transition: transform 0.3s ease;">
+                    {% else %}
+                    <img src="{% static 'images/default_company.jpeg' %}" class="card-img-top" alt="Default Logo" style="height: 200px; object-fit: contain; transition: transform 0.3s ease;">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title text-center font-weight-bold text-primary">{{ partner.name }}</h5>
+                    <p class="card-text text-muted">{{ partner.description|truncatewords:20 }}</p>
+                    <a href="{{ partner.website }}" class="btn btn-primary w-100" target="_blank" style="font-weight: 600; transition: background-color 0.3s ease;">Visit Website</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="text-muted">No hiring partners available.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% block styles %}
+<style>
+    /* Container with spacing */
+    /* .container {
+        background-color: #f7f8fa;
+        padding-top: 50px;
+    } */
+
+    /* Card design */
+    .card {
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Card image hover effect */
+    .card-img-wrapper:hover img {
+        transform: scale(1.05);
+    }
+
+    .card-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Heading styling */
+    .card-title {
+        font-size: 1.5rem;
+        color: #2c3e50;
+    }
+
+    .card-text {
+        font-size: 1rem;
+        color: #7f8c8d;
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background-color: #3498db;
+        border: none;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #2980b9;
+        transform: scale(1.05);
+    }
+
+    /* Image container styling */
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-img-top {
+        transition: transform 0.3s ease;
+    }
+
+    /* Empty state styling */
+    .col-12 p {
+        font-size: 1.2rem;
+        color: #95a5a6;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+
+        .btn-primary {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% endblock %}

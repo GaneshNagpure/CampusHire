@@ -21,4 +21,16 @@ urlpatterns = [
 
     path('applications/', views.tpo_applications_view, name='tpo_applications'),
     path('applications/update_status/<int:application_id>/', views.update_application_status, name='update_application_status'),
+    
+    path('schedule-drive/', views.schedule_drive, name='schedule-drive'),
+    path('manage-drive/', views.manage_drive, name='manage-drive'),
+    path('update-drive/<int:drive_id>/', views.update_drive, name='update-drive'),
+    path('delete-drive/<int:drive_id>/', views.delete_drive, name='delete-drive'),
+    path('drive/update-status/<int:drive_id>/', views.update_drive_status, name='update-drive-status'),
+
+    path('companies/', views.view_companies, name='view_companies'),
+    path('companies/add/', views.add_hiring_partner, name='add_hiring_partner'),
+    path('companies/update/<int:pk>/', views.update_hiring_partner, name='update_hiring_partner'),
+    path('companies/delete/<int:pk>/', views.delete_hiring_partner, name='delete_hiring_partner'),
+
 ]

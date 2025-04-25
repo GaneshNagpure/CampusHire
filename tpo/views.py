@@ -168,6 +168,11 @@ from datetime import datetime
 from users.models import Job  # Adjust import if necessary
 
 def export_to_excel(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     # Get from_date and to_date from the GET request
     from_date_str = request.GET.get('from_date')
     to_date_str = request.GET.get('to_date')
@@ -305,6 +310,11 @@ def tpo_login(request):
     return render(request, 'tpo_login.html')
 
 def tpo_logout(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     
     try:
         del request.session["tpo_id"]
@@ -317,7 +327,10 @@ def tpo_logout(request):
         return redirect('tpo_login')
 
 def tpo_update_profile(request):
-
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
     tpo = Tpo.objects.get(id=request.session.get('tpo_id'))  # assuming session holds vendor_id
 
     if request.method == 'POST':
@@ -354,6 +367,11 @@ def tpo_update_profile(request):
 
 
 def add_job(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     tpo = Tpo.objects.get(id=request.session.get('tpo_id'))  # assuming session holds tpo_id
     if request.method == "POST":
         role = request.POST.get('role')
@@ -386,6 +404,11 @@ from django.shortcuts import get_object_or_404, redirect
 from .models import Job
 
 def toggle_job_status(request, job_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     job = get_object_or_404(Job, id=job_id)
     job.is_active = not job.is_active
     job.save()
@@ -393,6 +416,11 @@ def toggle_job_status(request, job_id):
 
 
 def manage_job(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
 
     tpo_id = request.session.get("tpo_id")
 
@@ -406,6 +434,11 @@ def manage_job(request):
     return render(request, "manage_job.html", {"jobs": Jobs})
 
 def update_job(request, id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     Jobs = get_object_or_404(Job, id=id)
     print("you are updatating a job " ,id)
     
@@ -431,6 +464,11 @@ def update_job(request, id):
 
 from django.shortcuts import get_object_or_404, redirect
 def delete_job(request, job_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     
     Jobs =  get_object_or_404(Job, id=job_id)
     print("you are deleting a job " ,job_id)
@@ -443,6 +481,11 @@ from .models import Alumni
 from django.contrib import messages
 
 def add_alumni(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     if request.method == "POST":
         name = request.POST.get("name")
         email = request.POST.get("email")
@@ -468,6 +511,11 @@ def add_alumni(request):
 
 
 def update_alumni(request, alumni_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     alumni = get_object_or_404(Alumni, id=alumni_id)
     
     if request.method == "POST":
@@ -485,6 +533,11 @@ def update_alumni(request, alumni_id):
 
 
 def toggle_alumni_visibility(request, alumni_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     alumni = get_object_or_404(Alumni, id=alumni_id)
     alumni.is_visible = not alumni.is_visible
     alumni.save()
@@ -493,6 +546,11 @@ def toggle_alumni_visibility(request, alumni_id):
 
 
 def alumni_list(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     alumni = Alumni.objects.all().order_by("-id")
     return render(request, "alumni_list.html", {"alumni": alumni})
 
@@ -529,8 +587,13 @@ from django.shortcuts import render
 from users.models import JobApplication
 
 def tpo_applications_view(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     # Fetch all job applications for TPO to view
-    applications = JobApplication.objects.select_related('student', 'job').all()
+    applications = JobApplication.objects.select_related('student', 'job').all().order_by('-applied_at')
     
     # Pass the choices for the status field to the template
     status_choices = JobApplication._meta.get_field('status').choices
@@ -545,6 +608,11 @@ from django.http import HttpResponse
 from users.models import JobApplication
 
 def update_application_status(request, application_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     # Fetch the application
     application = get_object_or_404(JobApplication, id=application_id)
     
@@ -560,3 +628,213 @@ def update_application_status(request, application_id):
     # If it's not a POST request, return an error or a message
     return HttpResponse('Invalid request', status=400)
 
+from django.shortcuts import render, redirect
+from .models import Job, Drive, Tpo
+from django.utils.dateparse import parse_datetime
+from django.contrib import messages
+
+def schedule_drive(request):
+    if 'tpo_id' not in request.session:
+        messages.error(request, "Please login first")
+        return redirect('tpo_login')
+
+    tpo = Tpo.objects.get(id=request.session['tpo_id'])
+
+    if request.method == 'POST':
+        job_id = request.POST.get('job_id')
+        drive_date = parse_datetime(request.POST.get('drive_date'))
+        venue = request.POST.get('venue')
+        additional_info = request.POST.get('additional_info')
+
+        job = Job.objects.get(id=job_id)
+
+        Drive.objects.create(
+            job=job,
+            tpo=tpo,
+            drive_date=drive_date,
+            venue=venue,
+            additional_info=additional_info
+        )
+
+        messages.success(request, "Drive scheduled successfully!")
+        return redirect('tpo_dashboard')  # Redirect to TPO's dashboard or list
+
+    jobs = Job.objects.all()  # Show all jobs to TPO
+    return render(request, 'schedule_drive.html', {'jobs': jobs})
+
+
+# from django.shortcuts import render, redirect
+# from .models import Job, Drive, Tpo
+# from django.utils.dateparse import parse_datetime
+# from django.contrib import messages
+
+# def schedule_drive(request):
+#     if 'tpo_id' not in request.session:
+#         messages.error(request, "Please login first")
+#         return redirect('tpo_login')
+
+#     tpo = Tpo.objects.get(id=request.session['tpo_id'])
+
+#     if request.method == 'POST':
+#         job_id = request.POST.get('job_id')
+#         drive_date = parse_datetime(request.POST.get('drive_date'))
+#         venue = request.POST.get('venue')
+#         additional_info = request.POST.get('additional_info')
+
+#         job = Job.objects.get(id=job_id)
+
+#         Drive.objects.create(
+#             job=job,
+#             tpo=tpo,
+#             drive_date=drive_date,
+#             venue=venue,
+#             additional_info=additional_info
+#         )
+
+#         messages.success(request, "Drive scheduled successfully!")
+#         return redirect('tpo_dashboard')  # Redirect to TPO's dashboard or list
+
+#     jobs = Job.objects.all()  # Show all jobs to TPO
+#     return render(request, 'schedule_drive.html', {'jobs': jobs})
+
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from .models import Drive
+
+def manage_drive(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    # Retrieve all drives from the database
+    drives = Drive.objects.all()
+    
+    # Pass the drives to the template
+    return render(request, 'manage_drive.html', {'drives': drives})
+
+
+def update_drive(request, drive_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    # Retrieve the drive to update
+    drive = get_object_or_404(Drive, id=drive_id)
+    
+    if request.method == 'POST':
+        # Update drive fields with POST data (you can modify this based on your form fields)
+        drive.drive_date = request.POST.get('drive_date')
+        drive.venue = request.POST.get('venue')
+        drive.additional_info = request.POST.get('additional_info')
+        drive.save()
+        
+        # Redirect to the manage drive page after update
+        return HttpResponseRedirect(reverse('manage-drive'))
+    
+    # Pass the drive to the template for updating
+    return render(request, 'update_drive.html', {'drive': drive})
+
+def update_drive_status(request, drive_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    drive = get_object_or_404(Drive, id=drive_id)
+    new_status = request.POST.get("status")
+    if new_status in ['ongoing', 'completed', 'cancelled']:
+        drive.status = new_status
+        drive.save()
+        messages.success(request, f"Drive status updated to {new_status.capitalize()}.")
+    else:
+        messages.error(request, "Invalid status.")
+    return redirect('manage-drive')
+
+def delete_drive(request, drive_id):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    # Retrieve the drive to delete
+    drive = get_object_or_404(Drive, id=drive_id)
+    
+    # Delete the drive
+    drive.delete()
+    
+    # Redirect to the manage drive page after deletion
+    return HttpResponseRedirect(reverse('manage-drive'))
+
+from django.shortcuts import render
+from .models import HiringPartner
+
+def view_companies(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    companies = HiringPartner.objects.all()
+    return render(request, 'view_companies.html', {'companies': companies})
+
+# View to add a new Hiring Partner
+def add_hiring_partner(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        logo = request.FILES.get('logo')
+        website = request.POST.get('website')
+        year = request.POST.get('year', 2025)
+
+        # Create a new HiringPartner
+        HiringPartner.objects.create(
+            name=name,
+            description=description,
+            logo=logo,
+            website=website,
+            year=year
+        )
+
+        return redirect('view_companies')
+
+    return render(request, 'add_update_hiring_partner.html', {'action': 'Add'})
+
+# View to update an existing Hiring Partner
+def update_hiring_partner(request, pk):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    partner = get_object_or_404(HiringPartner, pk=pk)
+    
+    if request.method == 'POST':
+        partner.name = request.POST.get('name')
+        partner.description = request.POST.get('description')
+        partner.logo = request.FILES.get('logo') or partner.logo  # Keep old logo if none is uploaded
+        partner.website = request.POST.get('website')
+        partner.year = request.POST.get('year', partner.year)
+
+        partner.save()
+        return redirect('view_companies')
+
+    return render(request, 'add_update_hiring_partner.html', {'action': 'Update', 'partner': partner})
+
+# View to delete an existing Hiring Partner
+def delete_hiring_partner(request, pk):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+    
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+    partner = get_object_or_404(HiringPartner, pk=pk)
+    partner.delete()
+    return redirect('view_companies')

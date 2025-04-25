@@ -33,7 +33,9 @@ urlpatterns = [
     path('apply-job/<int:job_id>/', views.apply_job, name='apply_job'),
 
     path('my-applications/', views.my_applications, name='my_applications'),
+    path('student/drives/', views.student_drive_list, name='student-drive-list'),
 
+    path('student-companies/', views.student_view_companies, name='student_view_companies'),
 
 
 

@@ -1,0 +1,65 @@
+{% extends 'base1.html' %}
+
+{% block title %}Manage Drive - PLACEMENT{% endblock %}
+
+{% block content %}
+
+<h2 class="text-2xl font-bold mb-4">Manage Drives</h2>
+
+<div class="w-full">
+    <table class="w-full bg-white border border-gray-300 shadow-md rounded-lg">
+        <thead class="bg-gray-800 text-white">
+            <tr>
+                <th class="py-2 px-2 md:px-4 text-left">Job Role</th>
+                <th class="py-2 px-2 md:px-4 text-left">TPO</th>
+                <th class="py-2 px-2 md:px-4 text-left">Drive Date</th>
+                <th class="py-2 px-2 md:px-4 text-left">Venue</th>
+                <th class="py-2 px-2 md:px-4 text-left">Additional Info</th>
+                <th class="py-2 px-2 md:px-4 text-left">Actions</th>
+                <th class="py-2 px-2 md:px-4 text-left">Change Status</th>
+                <th class="py-2 px-2 md:px-4 text-left">Current Status</th>
+
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-300">
+            {% for drive in drives %}
+            <tr class="hover:bg-gray-100">
+                <td class="py-2 px-2 md:px-4">{{ drive.job.role }}</td>
+                <td class="py-2 px-2 md:px-4">{{ drive.tpo.full_name }}</td>
+                <td class="py-2 px-2 md:px-4">{{ drive.drive_date|date:"Y-m-d H:i" }}</td>
+                <td class="py-2 px-2 md:px-4">{{ drive.venue }}</td>
+                <td class="py-2 px-2 md:px-4">{{ drive.additional_info|default:"No additional info" }}</td>
+                <td class="py-2 px-2 md:px-4 flex flex-wrap gap-2">
+                    <a href="{% url 'update-drive' drive.id %}" class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm">Update</a>
+                    <a href="{% url 'delete-drive' drive.id %}" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+                <!-- Change Status Dropdown Form -->
+<td class="py-2 px-2 md:px-4">
+    <form action="{% url 'update-drive-status' drive.id %}" method="post">
+        {% csrf_token %}
+        <select name="status" onchange="this.form.submit()" class="border rounded px-2 py-1 text-sm">
+            <option value="ongoing" {% if drive.status == 'ongoing' %}selected{% endif %}>Ongoing</option>
+            <option value="completed" {% if drive.status == 'completed' %}selected{% endif %}>Completed</option>
+            <option value="cancelled" {% if drive.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+    </form>
+</td>
+
+<!-- Display Status with Color -->
+<td class="py-2 px-2 md:px-4">
+    {% if drive.status == 'cancelled' %}
+        <span class="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-semibold">Cancelled</span>
+    {% elif drive.status == 'completed' %}
+        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-semibold">Completed</span>
+    {% else %}
+        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-semibold">Ongoing</span>
+    {% endif %}
+</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

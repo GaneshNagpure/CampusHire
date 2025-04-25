@@ -214,3 +214,11 @@ class JobApplication(models.Model):
 
     def __str__(self):
         return f"{self.student} applied to {self.job}"
+
+from django.shortcuts import render
+from tpo.models import Drive
+from django.utils import timezone
+
+def student_drive_list(request):
+    drives = Drive.objects.filter(status='ongoing', drive_date__gte=timezone.now()).order_by('drive_date')
+    return render(request, 'student_drive_list.html', {'drives': drives})

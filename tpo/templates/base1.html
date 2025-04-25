@@ -37,7 +37,6 @@
 </head>
 <body class="bg-zinc-100">
     <div class="flex">
-       
         <!-- Sidebar -->
         <aside id="sidebar" class="w-64 bg-zinc-800 text-white h-screen sticky top-0 z-40 transform -translate-x-full lg:translate-x-0">
             <div class="p-4">
@@ -77,6 +76,26 @@
                         </ul>
                     </li>
 
+                    <!-- Drive Dropdown -->
+                    <li class="relative">
+                        <button onclick="toggleDropdown('driveDropdown')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-700">
+                            <span><i class="fas fa-calendar-alt sidebar-icon"></i> Drive</span>
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <ul id="driveDropdown" class="hidden bg-zinc-900 z-50">
+                            <li>
+                                <a href="{% url 'schedule-drive' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #374151;">
+                                    <i class="fas fa-calendar-plus sidebar-icon"></i> Schedule Drive
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'manage-drive' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #4B5563;">
+                                    <i class="fas fa-tasks sidebar-icon"></i> Manage Drive
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <!-- Alumni Dropdown -->
                     <li class="relative">
                         <button onclick="toggleDropdown('alumniDropdown')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-700">
@@ -97,6 +116,26 @@
                         </ul>
                     </li>
 
+                    <!-- Companies Dropdown -->
+                    <li class="relative">
+                        <button onclick="toggleDropdown('companiesDropdown')" class="w-full flex items-center justify-between px-6 py-3 hover:bg-zinc-700">
+                            <span><i class="fas fa-building sidebar-icon"></i> Companies</span>
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <ul id="companiesDropdown" class="hidden bg-zinc-900 z-50">
+                            <li>
+                                <a href="{% url 'add_hiring_partner' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #374151;">
+                                    <i class="fas fa-plus-circle sidebar-icon"></i> Add Company
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_companies' %}" class="flex items-center px-6 py-3 hover:bg-yellow-600" style="background-color: #4B5563;">
+                                    <i class="fas fa-list sidebar-icon"></i> Manage Companies
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li>
                         <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
                             <i class="fas fa-chart-bar sidebar-icon"></i> Statistics
@@ -105,11 +144,6 @@
                     <li>
                         <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
                             <i class="fas fa-question-circle sidebar-icon"></i> FAQ
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="flex items-center px-6 py-3 hover:bg-zinc-700">
-                            <i class="fas fa-bullhorn sidebar-icon"></i> Drives
                         </a>
                     </li>
                     <li>

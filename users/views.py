@@ -542,6 +542,23 @@ def profile(request):
                 if college and degree:
                     Education.objects.create(profile=profile, education_level=level, college=college, degree=degree)
 
+            # for company, role, start_date, end_date, role_type in zip(
+            #     request.POST.getlist("company[]"),
+            #     request.POST.getlist("role[]"),
+            #     request.POST.getlist("start_date[]"),
+            #     request.POST.getlist("end_date[]"),
+            #     request.POST.getlist("role_type[]")
+            # ):
+            #     if company and role:
+            #         Experience.objects.create(
+            #             profile=profile,
+            #             company=company,
+            #             role=role,
+            #             start_date=start_date,
+            #             end_date=end_date if end_date else None,
+            #             role_type=role_type
+            #         )
+
             for company, role, start_date, end_date, role_type in zip(
                 request.POST.getlist("company[]"),
                 request.POST.getlist("role[]"),
@@ -855,6 +872,8 @@ def edit_profile(request):
                 profile.zip_code = request.POST.get("zip_code")
                 profile.country = request.POST.get("country")
                 profile.enrollment = request.POST.get("enrollment")
+                profile.experience_type = request.POST.get("experience_type", "Fresher")  # <-- Fetch experience type
+
 
                 try:
                     profile.dob = datetime.strptime(request.POST.get("dob"), "%Y-%m-%d").date()
@@ -1225,3 +1244,14 @@ def my_applications(request):
 #         'user': user,
 #         'grouped_applications': grouped_applications
 #     })
+
+
+from django.shortcuts import render
+from tpo.models import HiringPartner
+
+def student_view_companies(request):
+    # Fetch all HiringPartner objects from the database
+    partners = HiringPartner.objects.all()
+
+    # Pass the partners to the template
+    return render(request, 'student_view_companies.html', {'partners': partners})

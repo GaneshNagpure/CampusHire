@@ -1,0 +1,180 @@
+{% extends 'base1.html' %}
+{% load static %}
+
+{% block content %}
+  <h6 class="mb-5 text-center text-dark font-weight-bold">Our Hiring Partners</h6>
+
+  <div class="row justify-content-center">
+    {% for company in companies %}
+    <div class="col-md-4 mb-4">
+      <div class="company-card bg-white shadow-sm rounded border p-4 d-flex flex-column">
+        <!-- Company Logo -->
+        <div class="d-flex justify-content-center mb-3">
+          {% if company.logo %}
+            <img src="{{ company.logo.url }}" class="company-logo" alt="{{ company.name }}">
+          {% else %}
+            <img src="{% static 'images/default_company.jpeg' %}" class="company-logo" alt="Logo">
+          {% endif %}
+        </div>
+
+        <!-- Company Name and Description -->
+        <h4 class="company-name text-center text-dark">{{ company.name }}</h4>
+        <p class="company-description text-muted text-center">{{ company.description|truncatewords:20 }}</p>
+
+        <!-- Hired Students Info -->
+        <p class="text-center"><strong>Hired:</strong> <span class="text-success">{{ company.total_hired_students }} students</span></p>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-center mt-auto">
+          {% if company.website %}
+            <a href="{{ company.website }}" class="btn btn-sm btn-outline-primary" target="_blank">Visit Website</a>
+          {% else %}
+            <span class="text-muted">No Website</span>
+          {% endif %}
+          <a href="{% url 'update_hiring_partner' company.pk %}" class="btn btn-sm btn-outline-warning ml-2">Edit</a>
+          <a href="{% url 'delete_hiring_partner' company.pk %}" class="btn btn-sm btn-outline-danger ml-2" onclick="return confirm('Are you sure you want to delete this company?');">Delete</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="text-center mt-5">
+    <a href="{% url 'add_hiring_partner' %}" class="btn btn-success btn-lg">+ Add New Hiring Partner</a>
+  </div>
+
+{% endblock %}
+
+{% block styles %}
+  <style>
+    /* General body styling */
+    body {
+      background-color: #f4f7fa;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    /* Card Styling */
+    .company-card {
+      border: 1px solid #ddd;
+      transition: all 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .company-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Company logo styling */
+    .company-logo {
+      object-fit: cover;  /* Ensures the image maintains its aspect ratio */
+      width: 120px;  /* Fixed width */
+      height: 120px;  /* Fixed height */
+      border-radius: 50%;  /* Round shape */
+      border: 2px solid #ddd;  /* Optional border */
+    }
+
+    /* Card Title */
+    .company-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    /* Company description */
+    .company-description {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    /* Hired students info */
+    .company-card p {
+      margin-bottom: 15px;
+    }
+
+    /* Button Styling */
+    .btn {
+      transition: all 0.2s ease;
+      padding: 8px 20px;
+      font-size: 0.875rem;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .btn-outline-primary {
+      color: #007bff;
+      border-color: #007bff;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .btn-outline-warning {
+      color: #ffc107;
+      border-color: #ffc107;
+    }
+
+    .btn-outline-warning:hover {
+      background-color: #ffc107;
+      color: white;
+    }
+
+    .btn-outline-danger {
+      color: #dc3545;
+      border-color: #dc3545;
+    }
+
+    .btn-outline-danger:hover {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #218838;
+    }
+
+    /* Margin and padding adjustments */
+    .text-center {
+      margin-bottom: 30px;
+    }
+
+    .text-muted {
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    .text-success {
+      color: #28a745;
+    }
+
+    /* Ensure the cards are of equal height */
+    .col-md-4 {
+      display: flex;
+      justify-content: stretch;
+    }
+
+    /* For equal height cards */
+    .company-card {
+      min-height: 350px; /* Adjust the min height if necessary */
+    }
+
+    /* Flexbox to make the buttons align at the bottom */
+    .company-card .mt-auto {
+      margin-top: auto;
+    }
+  </style>
+{% endblock %}

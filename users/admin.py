@@ -116,3 +116,5 @@ class JobApplicationAdmin(admin.ModelAdmin):
 
     # Enable editing the 'status' field directly in the list view
     list_editable = ('status',)
+
+

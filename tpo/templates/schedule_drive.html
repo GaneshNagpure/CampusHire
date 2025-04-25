@@ -1,0 +1,132 @@
+{% extends 'base1.html' %}
+
+{% block title %}Schedule Drive{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-3xl font-semibold text-dark">📅 Schedule Drive</h2>
+
+    <!-- Schedule Drive Form -->
+    <form method="POST" class="shadow-lg p-6 rounded-lg bg-white" style="border: 1px solid #ddd;">
+        {% csrf_token %}
+
+        <!-- Success or error message box (if any) -->
+        <div id="message-box" class="alert alert-success d-none" role="alert">
+            Drive scheduled successfully!
+        </div>
+
+        <script>
+            setTimeout(function() {
+                document.getElementById("message-box").style.display = "none";
+            }, 3000); // Hide message after 3 seconds
+        </script>
+
+        <!-- Job Selection -->
+        <div class="mb-4">
+            <label for="job_id" class="form-label font-weight-bold text-primary">Select Job</label>
+            <select id="job_id" name="job_id" class="form-select shadow-sm" required>
+                <option value="">-- Select Job --</option>
+                {% for job in jobs %}
+                    <option value="{{ job.id }}">{{ job.role }} at {{ job.company }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Drive Date and Time -->
+        <div class="mb-4">
+            <label for="drive_date" class="form-label font-weight-bold text-primary">Drive Date & Time</label>
+            <input type="datetime-local" id="drive_date" name="drive_date" class="form-control shadow-sm" required>
+        </div>
+
+        <!-- Venue Input -->
+        <div class="mb-4">
+            <label for="venue" class="form-label font-weight-bold text-primary">Venue</label>
+            <input type="text" id="venue" name="venue" class="form-control shadow-sm" placeholder="e.g. College Seminar Hall" required>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mb-4">
+            <label for="additional_info" class="form-label font-weight-bold text-primary">Additional Info</label>
+            <textarea id="additional_info" name="additional_info" class="form-control shadow-sm" rows="4" placeholder="Any special instructions..."></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-success px-5 py-2 shadow-lg hover:bg-green-700 transition-all ease-in-out duration-200">Schedule Drive</button>
+        </div>
+    </form>
+</div>
+
+{% block styles %}
+<style>
+    /* Overall container styling */
+    .container {
+        background-color: #f7f8fa;
+        padding-top: 50px;
+    }
+
+    /* Form card styling */
+    .card {
+        background-color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    /* Heading styling */
+    h2 {
+        font-weight: 600;
+        font-size: 2rem;
+        color: #4A4A4A;
+    }
+
+    /* Input fields and textarea styling */
+    .form-control {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #ddd;
+        padding: 12px;
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+    /* Label styling */
+    .form-label {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    /* Button styling */
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        font-weight: 600;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    /* Message box (e.g., success message) */
+    #message-box {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    /* Responsive design */
+    @media (max-width: 576px) {
+        h2 {
+            font-size: 1.5rem;
+        }
+        .form-control {
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% endblock %}

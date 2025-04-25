@@ -149,9 +149,13 @@
                     <div class="mb-3">
                         <label for="experience_type" class="form-label">Experience Type</label>
                         <select class="form-control" id="experience_type" name="experience_type">
-                            <option value="">-- Select --</option>
+                            <!-- <option value="">-- Select --</option>
                             <option value="fresher">Fresher</option>
-                            <option value="experienced">Experienced</option>
+                            <option value="experienced">Experienced</option> -->
+                            <option value="">-- Select --</option>
+                            <option value="fresher" {% if profile.experience_type == "Fresher" %}selected{% endif %}>Fresher</option>
+                            <option value="experienced" {% if profile.experience_type == "Experienced" %}selected{% endif %}>Experienced</option>
+
                         </select>
                     </div>
                     
@@ -241,7 +245,7 @@
     </div>
 </div>
 
-<script>
+<!-- <script>
 
 document.addEventListener("DOMContentLoaded", function () {
     let currentStep = 0;
@@ -406,5 +410,207 @@ document.getElementById("experience_type").addEventListener("change", function (
         inputs.forEach(input => input.value = "");
     }
 });
-</script>>
+
+document.querySelector('form').addEventListener('submit', function (e) {
+        const experienceEntries = document.querySelectorAll('.experience-entry');
+
+        for (let entry of experienceEntries) {
+            const startDate = new Date(entry.querySelector('input[name="start_date[]"]').value);
+            const endDateInput = entry.querySelector('input[name="end_date[]"]');
+            const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+
+            if (startDate && endDate) {
+                // Check if start date is greater than end date
+                if (startDate > endDate) {
+                    e.preventDefault();
+                    alert('Start Date cannot be after End Date.');
+                    return;
+                }
+
+                // Check if duration is less than 1 month
+                const diffInMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+                if (diffInMonths < 1) {
+                    e.preventDefault();
+                    alert('Duration should be at least 1 month.');
+                    return;
+                }
+            }
+        }
+    });       
+                     
+</script>-->
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let currentStep = 0;
+        const steps = document.querySelectorAll(".step");
+        const nextButtons = document.querySelectorAll(".next-step");
+        const prevButtons = document.querySelectorAll(".prev-step");
+        const instructionText = document.getElementById("instructionText");
+    
+        const instructions = [
+            "<p><strong>Step 1:</strong> Enter your personal details such as full name, email address, mobile number, and residential address. Optionally, you can also add links to your social profiles like LinkedIn, GitHub, or personal portfolio to help recruiters know more about you.</p>",
+            "<p><strong>Step 2:</strong> Add your educational background. Include details such as your college or university name, degree obtained, specialization, year of graduation, and academic achievements or relevant coursework if any.</p>",
+            "<p><strong>Step 3:</strong> List your work experience. If you have worked before, mention your job titles, company names, duration of employment, and a short description of your responsibilities and contributions. Internships and freelance work also count.</p>",
+            "<p><strong>Step 4:</strong> Highlight your skills and certifications. Add technical skills (e.g., Python, Django, SQL), soft skills (e.g., communication, teamwork), and any certifications you've completed from platforms like Coursera, Udemy, or official organizations.</p>",
+            "<p><strong>Step 5:</strong> Upload your profile picture and resume. Your profile picture helps personalize your application, and a well-formatted resume gives recruiters a quick overview of your qualifications and experience.</p>",
+            "<p><strong>Step 6:</strong> Review all the entered information before submission. Make sure everything is accurate, up-to-date, and free of grammatical errors. A polished profile increases your chances of getting shortlisted.</p>",
+            "<p><strong>Step 7:</strong> Save your profile and start applying for job openings that match your interests and qualifications. Keep your profile updated regularly to reflect your latest achievements.</p>"
+        ];
+    
+        function showStep(index) {
+            steps.forEach((step, i) => {
+                step.classList.toggle("d-none", i !== index);
+            });
+            instructionText.innerHTML = instructions[index];
+        }
+    
+        nextButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+        });
+    
+        prevButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+    
+        showStep(currentStep);
+    
+        function setupDynamicSection(containerId, addButtonId, sectionName) {
+            const container = document.getElementById(containerId);
+            const addButton = document.getElementById(addButtonId);
+            const removedMessage = document.createElement("div");
+    
+            removedMessage.id = `${sectionName}-removedMessage`;
+            removedMessage.style.display = "none";
+            removedMessage.style.color = "red";
+            removedMessage.style.marginTop = "10px";
+            container.parentNode.appendChild(removedMessage);
+    
+            function updateRemoveButtons() {
+                const removeButtons = container.querySelectorAll(`.remove-${sectionName}`);
+                removeButtons.forEach(btn => {
+                    btn.style.display = container.children.length > 1 ? "inline-block" : "none";
+                });
+            }
+    
+            addButton.addEventListener("click", function () {
+                let newEntry = container.firstElementChild.cloneNode(true);
+                newEntry.querySelectorAll("input").forEach(input => input.value = "");
+                newEntry.querySelectorAll("select").forEach(select => select.selectedIndex = 0);
+    
+                let removeBtn = newEntry.querySelector(`.remove-${sectionName}`);
+                if (!removeBtn) {
+                    removeBtn = document.createElement("button");
+                    removeBtn.type = "button";
+                    removeBtn.className = `btn btn-danger remove-${sectionName}`;
+                    removeBtn.textContent = "Remove";
+                    newEntry.appendChild(removeBtn);
+                }
+    
+                removeBtn.addEventListener("click", function () {
+                    newEntry.remove();
+                    showRemovedMessage();
+                    updateRemoveButtons();
+                });
+    
+                container.appendChild(newEntry);
+                updateRemoveButtons();
+            });
+    
+            function showRemovedMessage() {
+                removedMessage.textContent = `${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)} entry removed!`;
+                removedMessage.style.display = "block";
+                setTimeout(() => removedMessage.style.display = "none", 3000);
+            }
+    
+            updateRemoveButtons();
+        }
+    
+        setupDynamicSection("education-container", "add-education", "education");
+        setupDynamicSection("experience-container", "add-experience", "experience");
+        setupDynamicSection("skills-container", "add-skill", "skill");
+        setupDynamicSection("certifications-container", "add-certification", "certification");
+    
+        // Experience type toggling
+        document.getElementById("experience_type").addEventListener("change", function () {
+            const selected = this.value;
+            const experienceSection = document.getElementById("experience-section");
+    
+            if (selected === "experienced") {
+                experienceSection.style.display = "block";
+            } else {
+                experienceSection.style.display = "none";
+                const inputs = experienceSection.querySelectorAll("input, select");
+                inputs.forEach(input => input.value = "");
+            }
+        });
+    
+        // Pincode auto-fill
+        document.getElementById("zip_code").addEventListener("blur", function () {
+            const pincode = this.value.trim();
+            if (pincode.length === 6 && /^\d+$/.test(pincode)) {
+                fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data[0].Status === "Success" && data[0].PostOffice.length > 0) {
+                            const office = data[0].PostOffice[0];
+                            document.getElementById("city").value = office.District;
+                            document.getElementById("state").value = office.State;
+                            document.getElementById("country").value = office.Country;
+                        } else {
+                            alert("Invalid or unavailable PIN code.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error:", err);
+                        alert("Failed to fetch location details.");
+                    });
+            } else {
+                alert("Please enter a valid 6-digit Indian PIN code.");
+            }
+        });
+    
+        // Final form submission handler with date validation
+        document.querySelector("#profileForm").addEventListener("submit", function (e) {
+            const experienceType = document.getElementById("experience_type").value;
+            if (experienceType === "experienced") {
+                const experienceEntries = document.querySelectorAll('.experience-entry');
+                for (let entry of experienceEntries) {
+                    const startDate = new Date(entry.querySelector('input[name="start_date[]"]').value);
+                    const endDateInput = entry.querySelector('input[name="end_date[]"]');
+                    const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+    
+                    if (startDate && endDate) {
+                        if (startDate > endDate) {
+                            e.preventDefault();
+                            alert('Start Date cannot be after End Date.');
+                            return;
+                        }
+    
+                        const diffInMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+                        if (diffInMonths < 1) {
+                            e.preventDefault();
+                            alert('Duration should be at least 1 month.');
+                            return;
+                        }
+                    }
+                }
+            }
+    
+            // Reveal last step if needed
+            document.getElementById("step5").classList.remove("d-none");
+        });
+    });
+    </script>
 {% endblock %}
