@@ -54,7 +54,7 @@
         </div>
     </div>
 
-    <!-- Featured Jobs Section -->
+    <!-- Featured Jobs Section
     <div class="mt-5" data-aos="fade-up">
         <h2 class="text-center fw-bold mb-4">Latest Job Openings</h2>
         <div class="row g-4">
@@ -75,7 +75,28 @@
             {% endfor %}
         </div>
         
+    </div> -->
+    <!-- Featured Jobs Section -->
+<div class="mt-5" data-aos="fade-up">
+    <h2 class="text-center fw-bold mb-4">Latest Job Openings</h2>
+    <div class="row g-4">
+        {% for job in active_jobs %}
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|add:'1' }}00">
+            <div class="card p-4 shadow-sm border-0 h-100">
+                <h5 class="fw-bold mb-1">{{ job.role }}</h5>
+                <p class="text-muted mb-3">{{ job.company }} – {{ job.job_location|default:"Remote" }}</p>
+                {% if request.session.user_id %}
+                    <a href="" class="btn btn-outline-primary w-100 rounded-pill fw-semibold">Apply Now</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary w-100 rounded-pill fw-semibold">Apply for Job</a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No jobs available at the moment.</p>
+        {% endfor %}
     </div>
+</div>
 
     <!-- How It Works Section -->
     <div class="mt-5 text-center">

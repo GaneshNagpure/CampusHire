@@ -33,4 +33,6 @@ urlpatterns = [
     path('companies/update/<int:pk>/', views.update_hiring_partner, name='update_hiring_partner'),
     path('companies/delete/<int:pk>/', views.delete_hiring_partner, name='delete_hiring_partner'),
 
+    path('statics/', views.tpo_dashboard_graphs, name='tpo_graph_dashboard'),
+
 ]

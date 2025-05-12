@@ -1,6 +1,9 @@
 {% extends "base/base.html" %}
 
 {% block title %}About Us - CampusHire{% endblock %}
+{% load static %}
+
+
 
 {% block content %}
 <div class="container py-5">
@@ -107,18 +110,38 @@
     </div>
 
     <!-- Space for College Images -->
-    <h2 class="fw-bold mt-5">Our College</h2>
+    <!-- <h2 class="fw-bold mt-5">Our College</h2>
     <div class="row mb-5">
         <div class="col-md-4">
-            <img src="path_to_your_image1.jpg" class="img-fluid rounded shadow" alt="College Image 1">
+            <img src="{% static 'images/clg1.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 1">
         </div>
         <div class="col-md-4">
-            <img src="path_to_your_image2.jpg" class="img-fluid rounded shadow" alt="College Image 2">
+            <img src="{% static 'images/clg2.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 2">
         </div>
         <div class="col-md-4">
-            <img src="path_to_your_image3.jpg" class="img-fluid rounded shadow" alt="College Image 3">
+            <img src="{% static 'images/clg3.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 3">
         </div>
-    </div>
+                <div class="col-md-4">
+            <img src="{% static 'images/clg4.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 3">
+        </div>
+                <div class="col-md-4">
+            <img src="{% static 'images/clg5.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 3">
+        </div>
+                <div class="col-md-4">
+            <img src="{% static 'images/clg6.jpeg' %}" class="img-fluid rounded shadow" alt="College Image 3">
+        </div>
+    </div> -->
+    <h2 class="fw-bold mt-5">Our College</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 mb-5">
+            {% for i in "123456" %}
+            <div class="col">
+                <div class="card shadow h-100 border-0">
+                    <img src="{% static 'images/clg'|add:i|add:'.jpeg' %}" class="card-img-top img-fluid rounded object-fit-cover" alt="College Image {{ i }}" style="height: 250px; object-fit: cover;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
 
     <!-- YouTube Video -->
     <h2 class="fw-bold mt-5">Watch Our Video</h2>

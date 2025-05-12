@@ -371,7 +371,6 @@ def add_job(request):
         messages.error(request, "You need to log in first.")
         return redirect("tpo_login")
     
-    tpo = Tpo.objects.get(id=request.session["tpo_id"])
     tpo = Tpo.objects.get(id=request.session.get('tpo_id'))  # assuming session holds tpo_id
     if request.method == "POST":
         role = request.POST.get('role')
@@ -838,3 +837,94 @@ def delete_hiring_partner(request, pk):
     partner = get_object_or_404(HiringPartner, pk=pk)
     partner.delete()
     return redirect('view_companies')
+
+
+
+# def tpo_dashboard_graphs(request):
+#     if "tpo_id" not in request.session:
+#         messages.error(request, "You need to log in first.")
+#         return redirect("tpo_login")
+
+#     tpo = Tpo.objects.get(id=request.session["tpo_id"])
+
+#     # Gather statistics
+#     total_jobs = Job.objects.count()
+#     total_applications = JobApplication.objects.count()
+#     total_candidates = User.objects.count()
+#     shortlisted = JobApplication.objects.filter(status="shortlisted").count()
+#     ongoing_interviews = JobApplication.objects.filter(status="interviewing").count()
+#     placed = JobApplication.objects.filter(status="placed").count()
+#     rejected = JobApplication.objects.filter(status="rejected").count()
+
+#     context = {
+#         'tpo': tpo,
+#         'total_jobs': total_jobs,
+#         'total_applications': total_applications,
+#         'total_candidates': total_candidates,
+#         'shortlisted': shortlisted,
+#         'ongoing_interviews': ongoing_interviews,
+#         'placed': placed,
+#         'rejected': rejected,
+#     }
+
+#     return render(request, 'statics.html', context)
+
+from django.utils.dateparse import parse_date
+from datetime import datetime
+from django.db.models import Q
+
+def tpo_dashboard_graphs(request):
+    if "tpo_id" not in request.session:
+        messages.error(request, "You need to log in first.")
+        return redirect("tpo_login")
+
+    tpo = Tpo.objects.get(id=request.session["tpo_id"])
+
+    # Get date range from request GET params (optional filtering)
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    # Filter only ACTIVE jobs
+    active_jobs = Job.objects.filter(is_active=True)
+
+    # Base queryset for job applications (active jobs only)
+    application_filter = Q(job__in=active_jobs)
+
+    # Apply date range filter if both dates are provided
+    if from_date and to_date:
+        try:
+            from_date_obj = parse_date(from_date)
+            to_date_obj = parse_date(to_date)
+            if from_date_obj and to_date_obj:
+                application_filter &= Q(applied_at__date__range=(from_date_obj, to_date_obj))
+        except:
+            pass
+
+    filtered_applications = JobApplication.objects.filter(application_filter)
+
+    # Compute statistics based on filtered applications
+    total_jobs = active_jobs.count()
+    total_applications = filtered_applications.count()
+    total_candidates = User.objects.count()
+
+    shortlisted = filtered_applications.filter(status="shortlisted").count()
+    ongoing_interviews = filtered_applications.filter(status="interviewing").count()
+    placed = filtered_applications.filter(status="placed").count()
+    rejected = filtered_applications.filter(status="rejected").count()
+
+    context = {
+        'tpo': tpo,
+        'total_jobs': total_jobs,
+        'total_applications': total_applications,
+        'total_candidates': total_candidates,
+        'shortlisted': shortlisted,
+        'ongoing_interviews': ongoing_interviews,
+        'placed': placed,
+        'rejected': rejected,
+        'from_date': from_date,
+        'to_date': to_date,
+    }
+
+    return render(request, 'statics.html', context)
+
+
